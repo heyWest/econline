@@ -1,10 +1,27 @@
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+
+import os 
+
 
 app=Flask(__name__)
 
-app.config['SECRET_KEY'] = 'facf980d98edffa2d563e876aba7a646'
+#config
+app.config['SECRET_KEY'] = os.environ['EC_SECRET_KEY']
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['EC_URI']
 
 
+#instances
+db = SQLAlchemy(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'admin_login'
+login_manager.login_message_category = 'info'
+
+
+
+
+#Importing routes
 from econline import routes
 from econline.admin.routes import admin
 from econline.voters.routes import voters
