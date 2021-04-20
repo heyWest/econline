@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% if title %}
+    <title>{{title}} | BHJCR Online</title>
+    {% else %}
+    <title>BHJCR Online</title>
+    {% endif %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='assets/img/favicon.ico')}}" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css')}}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='fonts/font-awesome-4.7.0/css/font-awesome.min.css')}}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/admin-landing.css')}}">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">EC Online</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarsExample07">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Dashboard <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('admin.admin_logout')}}">Logout</a>
+                    </li>
+                    <!--
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">Disabled</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown07" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdown07">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                        </div>
+                    </li>
+-->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main role="main">
+        <div class="container-full-bg">
+            <section class="jumbotron text-center">
+                <div class="container">
+                    <h1 class="jumbotron-heading">Welcome to your Election Creator!</h1>
+                    <p class="lead text-muted">Get started by creating your first election.</p>
+                    <p>
+                        <!--animate button later -->
+                        <a href="#" class="btn btn-outline-primary btn-lg my-2" aria-pressed="true" role="button" data-toggle="modal" data-target="#createElectionModal"><i class="fa fa-plus-square"></i> Create Election</a>
+                    </p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="createElectionModal" tabindex="-1" role="dialog" aria-labelledby="createElectionModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title text-center" id="createElectionModalLabel">Create New Election</h3>
+                        <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <form>
+                            <div class="form-row">
+                                <div class="form-group col-12">
+                                    <label for="formGroupExampleInput">Election Name</label>
+                                    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter the name of the election">
+                                </div>
+                                <div class="form-group col-12 col-md-6">
+                                    <label for="formGroupExampleInput2">Start Date</label>
+                                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input">
+                                </div>
+                                <div class="form-group col-12 col-md-6">
+                                    <label for="formGroupExampleInput2">End Date</label>
+                                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input">
+                                </div>
+                            </div>
+                        </form>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Create Election</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+
+    <footer class="text-muted">
+        <div class="container">
+            <p class="float-right">
+                <a href="#">Back to top</a>
+            </p>
+            <p>Copyright © 2021 BHJCR | Terms of Service | Privacy Policy</p>
+        </div>
+    </footer>
+
+    <!--===============================================================================================-->
+    <script src="{{url_for('static', filename='vendor/jquery/jquery-3.2.1.min.js')}}"></script>
+    <!--===============================================================================================-->
+    <script src="{{url_for('static', filename='vendor/bootstrap/js/popper.js')}}"></script>
+    <script src="{{url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js')}}"></script>
+    <!--===============================================================================================-->
+
+    <script>
+        // letting the flashed messages disappear
+        setTimeout(function() {
+            $('.alert').fadeOut('fast');
+        }, 4000);
+
+    </script>
+
+</body>
+
+</html>

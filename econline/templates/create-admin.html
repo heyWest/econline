@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="page-section bg-primary text-white mb-0 mt-2" id="about">
+    <div class="container">
+        <!-- About Section Heading-->
+        <h2 class="page-section-heading text-center text-uppercase text-white mt-2">ADD NEW ADMIN</h2>
+        <!-- Icon Divider-->
+        <div class="divider-custom divider-light">
+            <div class="divider-custom-line"></div>
+            <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+            <div class="divider-custom-line"></div>
+        </div>
+
+        <div class="col-lg-6 col-md-auto">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <ul class=flashes>
+                {% for category, message in messages %}
+                <li class="{{ category }} alert">
+                    <center>{{ message }}</center>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12 ml-auto">
+                <form action="" method="POST">
+                    {{form.hidden_tag()}}
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        {{form.email(class="form-control", id="exampleInputEmail1")}}
+
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Password</label>
+                        {{form.password(class="form-control", id="exampleInputPassword1")}}
+                    </div>
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-danger">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <ul class="list-group">
+                <li class="list-group-item active" aria-current="true">Admins List</li>
+                {% for admin in admin_list %}
+                <li class="list-group-item text-warning">{{admin.email}} | <a role="button" data-toggle="modal" data-target="#admin-{{admin.id}}">Delete</a></li>
+                
+                <!-- delete -->
+                <div class="modal bd-del-modal-lg" tabindex="-1" id="admin-{{admin.id}}" role="dialog" aria-labelledby="myDelModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Delete Product?</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="delForm-{{admin.id}}" method="POST" action="{{url_for('admin.delete_admin', admin_id=admin.id)}}">
+                                    <button class="btn btn-danger" type="submit">Delete Admin?</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+
+            </ul>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
