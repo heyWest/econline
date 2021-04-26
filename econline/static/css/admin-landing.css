@@ -2,6 +2,7 @@
   --jumbotron-padding-y: 3rem;
 }
 
+
 .jumbotron {
   padding-top: var(--jumbotron-padding-y);
   padding-bottom: var(--jumbotron-padding-y);
@@ -24,14 +25,31 @@
   font-weight: 300;
 }
 
+
 .jumbotron .container {
   max-width: 40rem;
+}
+
+/*
+table.table.table-condensed {
+    border: 1px solid black;
+}
+*/
+
+.table td, .table th {
+    border: none;
+}
+
+
+tr {
+    cursor: pointer;
 }
 
 
 footer {
   padding-top: 3rem;
   padding-bottom: 3rem;
+  bottom: 0;
 }
 
 footer p {

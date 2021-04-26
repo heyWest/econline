@@ -3,8 +3,10 @@ from flask import render_template, url_for, redirect, request, jsonify, make_res
 from flask_login import login_user, current_user, logout_user, login_required
 from econline import bcrypt, db
 import logging
-from econline.models import Admin
-from econline.forms import LoginForm, NewAdminForm
+from econline.models import Admin, Election
+from econline.forms import LoginForm, NewAdminForm, NewElectionForm
+import datetime
+
 
 admin = Blueprint('admin', __name__)
 
@@ -26,9 +28,33 @@ def admin_login():
 
 
 @login_required
-@admin.route('/admin/landing')
+@admin.route('/admin/landing', methods=['POST', 'GET'])
 def admin_landing():
-    return render_template("admin-landing.html", title="EC Landing")
+    election_form = NewElectionForm()
+    if request.method == "POST" and election_form.validate_on_submit():
+        # converting dates and times to string then joining them
+        start_at = election_form.start_date.data.strftime("%Y-%m-%d")+ " " + election_form.end_time.data.strftime("%H:%M")
+        end_at = election_form.end_date.data.strftime("%Y-%m-%d") + " " + election_form.end_time.data.strftime("%H:%M")
+        
+        #chaging str back to datetime and inserting to db
+        new_election = Election(name=election_form.name.data, start_at=datetime.datetime.strptime(start_at, "%Y-%m-%d %H:%M"), end_at=datetime.datetime.strptime(end_at, "%Y-%m-%d %H:%M"))
+        db.session.add(new_election)
+        db.session.commit()
+        
+        flash('New Election Added', 'success')
+        return "Sucess!s"
+    
+    election_list = Election.query.all()
+    
+    return render_template("admin-landing.html", title="EC Landing", election_form=election_form, election_list=election_list)
+
+
+@login_required
+@admin.route('/admin/election', methods=['POST', 'GET'])
+@admin.route('/admin/election/<election_id>', methods=['POST', 'GET'])
+def admin_election(election_id):
+    election = Election.query.filter_by(id=election_id)
+    return "Hahaha"
 
 
 @login_required

@@ -1,7 +1,7 @@
 from datetime import datetime
 from econline import db, login_manager, app
 from flask_login import UserMixin
-
+import uuid
 
 @login_manager.user_loader
 def load_user(admin_id):
@@ -15,12 +15,13 @@ class Admin(db.Model, UserMixin):
 
 
 class Election(db.Model):
-    id = db.Column(db.String(20), primary_key=True)
+    id = db.Column(db.String(20), primary_key=True, default=str(uuid.uuid4())[:8])
     name = db.Column(db.String(200), nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated = db.Column(db.DateTime, onupdate=datetime.utcnow)
     start_at = db.Column(db.DateTime, nullable=False)
     end_at = db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.String(20), nullable=False, default="Building")
     votes_number = db.Column(db.Integer, nullable=False, default=0)
     
 
