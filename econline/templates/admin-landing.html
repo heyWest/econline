@@ -18,7 +18,7 @@
     <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/admin-landing.css')}}">
     <!--===============================================================================================-->
-    <!--    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/bootstrap-datetimepicker.min.css')}}">-->
+
 </head>
 
 <body>
@@ -38,19 +38,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{url_for('admin.admin_logout')}}">Logout</a>
                     </li>
-                    <!--
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#">Disabled</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown07" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-                        <div class="dropdown-menu" aria-labelledby="dropdown07">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                        </div>
-                    </li>
--->
                 </ul>
             </div>
         </div>
@@ -70,98 +57,10 @@
                 </div>
             </section>
         </div>
-    {% else %}
-        <!-- Modal -->
-        <div class="modal fade" id="createElectionModal" tabindex="-1" role="dialog" aria-labelledby="createElectionModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 class="modal-title text-center" id="createElectionModalLabel">Create New Election</h3>
-                        <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form method="POST" action="">
-                        <div class="modal-body">
-                            {{election_form.hidden_tag()}}
-                            <div class="form-row">
-                                <div class="form-group col-12">
-                                    {{ election_form.name.label(class="form-control-label") }}
-                                    {% if election_form.name.errors %}
-                                    {{ election_form.name(class="form-control form-control-lg is-invalid") }}
-                                    <div class="invalid-feedback">
-                                        {% for error in election_form.name.errors %}
-                                        <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                    {% else %}
-                                    {{ election_form.name(class="form-control form-control-lg") }}
-                                    {% endif %}
-                                </div>
-                                <div class="form-group col-12 col-md-6">
-                                    {{ election_form.start_date.label(class="form-control-label") }}
-                                    {% if election_form.start_date.errors %}
-                                    {{ election_form.start_date(class="form-control form-control-lg is-invalid") }}
-                                    <div class="invalid-feedback">
-                                        {% for error in election_form.start_date.errors %}
-                                        <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                    {% else %}
-                                    {{ election_form.start_date(class="form-control form-control-lg") }}
-                                    {% endif %}
-                                </div>
-                                <div class="form-group col-12 col-md-6">
-                                    {{ election_form.end_date.label(class="form-control-label") }}
-                                    {% if election_form.end_date.errors %}
-                                    {{ election_form.end_date(class="form-control form-control-lg is-invalid") }}
-                                    <div class="invalid-feedback">
-                                        {% for error in election_form.end_date.errors %}
-                                        <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                    {% else %}
-                                    {{ election_form.end_date(class="form-control form-control-lg") }}
-                                    {% endif %}
-                                </div>
-                                <div class="form-group col-12 col-md-6">
-                                    {{ election_form.start_time.label(class="form-control-label") }}
-                                    {% if election_form.start_time.errors %}
-                                    {{ election_form.start_time(class="form-control form-control-lg is-invalid") }}
-                                    <div class="invalid-feedback">
-                                        {% for error in election_form.start_time.errors %}
-                                        <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                    {% else %}
-                                    {{ election_form.start_time(class="form-control form-control-lg") }}
-                                    {% endif %}
-                                </div>
-                                <div class="form-group col-12 col-md-6">
-                                    {{ election_form.end_time.label(class="form-control-label") }}
-                                    {% if election_form.end_time.errors %}
-                                    {{ election_form.end_date(class="form-control form-control-lg is-invalid") }}
-                                    <div class="invalid-feedback">
-                                        {% for error in election_form.end_time.errors %}
-                                        <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                    {% else %}
-                                    {{ election_form.end_time(class="form-control form-control-lg") }}
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="modal-footer mt-auto">
-                            <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Create Election</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
     </main>
+    {% else %}
+        
+
   
     <main role="main">
         <div class="container mb-2">
@@ -188,12 +87,12 @@
                         </thead>
                         <tbody>
                             {% for election in election_list %}
-                                <tr class="clickable-row" data-href="{{url_for('admin.admin_election', election_id=election.id)}}">
-                                    <td>{{election.name}}</td>
-                                    <td>{{election.start_at}}</td>
-                                    <td>{{election.end_at}}</td>
-                                    <td>{{election.status}}</td>
-                                </tr>
+                            <tr class="clickable-row" data-href="{{url_for('admin.admin_election', election_id=election.id)}}">
+                                <td>{{election.name}}</td>
+                                <td>{{election.start_at.strftime("%Y, %b %d, %H:%M")}}</td>
+                                <td>{{election.end_at.strftime("%Y, %b %d, %H:%M")}}</td>
+                                <td>{{election.status}}</td>
+                            </tr>
                             {% endfor %}
                         </tbody>
                         <tfoot>
@@ -211,7 +110,96 @@
     </main>
     {% endif%}
 
+    <!-- Modal -->
+    <div class="modal fade" id="createElectionModal" tabindex="-1" role="dialog" aria-labelledby="createElectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title text-center" id="createElectionModalLabel">Create New Election</h3>
+                    <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="POST" action="">
+                    <div class="modal-body">
+                        {{election_form.hidden_tag()}}
+                        <div class="form-row">
+                            <div class="form-group col-12">
+                                {{ election_form.name.label(class="form-control-label") }}
+                                {% if election_form.name.errors %}
+                                {{ election_form.name(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in election_form.name.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ election_form.name(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                {{ election_form.start_date.label(class="form-control-label") }}
+                                {% if election_form.start_date.errors %}
+                                {{ election_form.start_date(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in election_form.start_date.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ election_form.start_date(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                {{ election_form.end_date.label(class="form-control-label") }}
+                                {% if election_form.end_date.errors %}
+                                {{ election_form.end_date(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in election_form.end_date.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ election_form.end_date(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                {{ election_form.start_time.label(class="form-control-label") }}
+                                {% if election_form.start_time.errors %}
+                                {{ election_form.start_time(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in election_form.start_time.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ election_form.start_time(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group col-12 col-md-6">
+                                {{ election_form.end_time.label(class="form-control-label") }}
+                                {% if election_form.end_time.errors %}
+                                {{ election_form.end_date(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in election_form.end_time.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ election_form.end_time(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="modal-footer mt-auto">
+                        <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Create Election</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 
     <footer class="text-muted">

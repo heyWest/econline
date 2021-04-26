@@ -42,7 +42,7 @@ def admin_landing():
         db.session.commit()
         
         flash('New Election Added', 'success')
-        return "Sucess!s"
+        return redirect(url_for('admin.admin_election', election_id=new_election.id))
     
     election_list = Election.query.all()
     
@@ -53,8 +53,9 @@ def admin_landing():
 @admin.route('/admin/election', methods=['POST', 'GET'])
 @admin.route('/admin/election/<election_id>', methods=['POST', 'GET'])
 def admin_election(election_id):
-    election = Election.query.filter_by(id=election_id)
-    return "Hahaha"
+    election = Election.query.filter_by(id=election_id).first()
+    
+    return render_template('admin-election.html', title=election.name, election=election)
 
 
 @login_required
