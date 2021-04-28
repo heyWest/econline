@@ -33,98 +33,68 @@
     <div class="container-fluid">
       <div class="row">
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-          <div class="sidebar-sticky">
-            <ul class="nav flex-column">
-              <li class="nav-item">
-                <a class="nav-link active" href="#">
-                  <span data-feather="home"></span>
-                  Overview <span class="sr-only">(current)</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file"></span>
-                  Orders
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="shopping-cart"></span>
-                  Products
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="users"></span>
-                  Customers
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="bar-chart-2"></span>
-                  Reports
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="layers"></span>
-                  Integrations
-                </a>
-              </li>
-            </ul>
-
-<!--
-            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-              <span>Saved reports</span>
-              <a class="d-flex align-items-center text-muted" href="#">
-                <span data-feather="plus-circle"></span>
-              </a>
-            </h6>
-            <ul class="nav flex-column mb-2">
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
-                  Current month
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
-                  Last quarter
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
-                  Social engagement
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
-                  Year-end sale
-                </a>
-              </li>
-            </ul>
-          </div>
--->
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{url_for('admin.admin_election', election_id = election.id)}}">
+                            <span data-feather="home"></span>
+                            Overview <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    {% if election.status == "Building" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('admin.election_settings', election_id = election.id)}}">
+                            <span data-feather="settings"></span>
+                            Settings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('admin.election_ballot', election_id = election.id)}}">
+                            <span data-feather="archive"></span>
+                            Ballots
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('admin.election_voters', election_id = election.id)}}">
+                            <span data-feather="users"></span>
+                            Voters
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-feather="zap"></span>
+                            Launch Election
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('admin.election_analyse', election_id = election.id)}}">
+                            <span data-feather="bar-chart-2"></span>
+                            Election Analysis
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
         </nav>
-
+{% block content %}
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
             <h1 class="h2">Overview</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
               <div class="btn-group mr-2">
-                <button class="btn btn-sm btn-outline-secondary">Share</button>
-                <button class="btn btn-sm btn-outline-secondary">Export</button>
+                <button class="btn btn-sm btn-outline-secondary">{{election.status}}</button>
+<!--                <button class="btn btn-sm btn-outline-secondary">Export</button>-->
               </div>
+<!--
               <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
                 <span data-feather="calendar"></span>
                 This week
               </button>
+-->
             </div>
           </div>
-
+        
           <!-- The main sauce for cards -->
             <div class="container">
                 <div class="row">
@@ -137,10 +107,36 @@
                         </div>
                     </div>
                      <div class="col-12 col-md-6">
-                        <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card bg-light mb-3 " style="max-width: 18rem; margin-left: 11.5rem;">
                             <div class="card-header font-weight-bold">Election Finish Date:</div>
                             <div class="card-body">
                                 <span data-feather="clock"></span> <b>{{election.end_at.strftime("%Y, %b %d, %H:%M")}}</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-12 col-md-4">
+                        <div class="card bg-light mb-3" style="max-width: 18rem;">
+                            <div class="card-header font-weight-bold">Number of Voters:</div>
+                            <div class="card-body">
+                                <span data-feather="user"></span>  <b></b>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="col-12 col-md-4">
+                        <div class="card bg-light mb-3" style="max-width: 18rem;">
+                            <div class="card-header font-weight-bold">Number of votes casted:</div>
+                            <div class="card-body">
+                                <span data-feather="user"></span> <b>{{election.votes_number}}</b>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="card bg-light mb-3" style="max-width: 18rem;">
+                            <div class="card-header font-weight-bold">Percentage of Voters Voted:</div>
+                            <div class="card-body">
+                                <span data-feather="percent"></span> <b></b>
                             </div>
                         </div>
                     </div>
@@ -149,6 +145,7 @@
 
           
         </main>
+        {% endblock content %}
       </div>
     </div>
 
@@ -165,6 +162,9 @@
     <script>
       feather.replace()
     </script>
+    
+    {% block scripts %}
+    {% endblock scripts %}
       
   </body>
 </html>

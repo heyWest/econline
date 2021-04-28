@@ -59,6 +59,42 @@ def admin_election(election_id):
 
 
 @login_required
+@admin.route('/admin/election/settings', methods=['POST', 'GET'])
+@admin.route('/admin/election/settings/<election_id>', methods=['POST', 'GET'])
+def election_settings(election_id):
+    election = Election.query.filter_by(id=election_id).first()
+    
+    return render_template('election-settings.html', title=election.name, election=election)
+
+
+@login_required
+@admin.route('/admin/election/ballot', methods=['POST', 'GET'])
+@admin.route('/admin/election/ballot/<election_id>', methods=['POST', 'GET'])
+def election_ballot(election_id):
+    election = Election.query.filter_by(id=election_id).first()
+    
+    return render_template('election-ballot.html', title=election.name, election=election)
+
+
+@login_required
+@admin.route('/admin/election/voters', methods=['POST', 'GET'])
+@admin.route('/admin/election/voters/<election_id>', methods=['POST', 'GET'])
+def election_voters(election_id):
+    election = Election.query.filter_by(id=election_id).first()
+    
+    return render_template('election-voters.html', title=election.name, election=election)
+
+
+@login_required
+@admin.route('/admin/election/analyse', methods=['POST', 'GET'])
+@admin.route('/admin/election/analyse/<election_id>', methods=['POST', 'GET'])
+def election_analyse(election_id):
+    election = Election.query.filter_by(id=election_id).first()
+    
+    return render_template('election-analyse.html', title=election.name, election=election)
+
+
+@login_required
 @admin.route('/admin/logout')
 def admin_logout():
     logout_user()
