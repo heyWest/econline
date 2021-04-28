@@ -59,11 +59,22 @@
         </div>
     </main>
     {% else %}
-        
 
-  
+
+
     <main role="main">
         <div class="container mb-2">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            <!-- This function gets a flashed message when redirected to another page -->
+            {% if messages%}
+            {% for category, message in messages%}
+            <!-- the message it flashes is dependent on the category -->
+            <div class="alert alert-{{ category }}">
+                <span data-feather="alert-circle"></span>{{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
             <div class="row">
                 <div class="col-12 col-md-6 mt-2">
                     <h3>Dashboard</h3>
@@ -232,12 +243,13 @@
     </script>
     <script>
         {% if election_form.errors %}
-            $(document).on('ready', function() {
+            $(window).on('load', function() {
                 $('#createElectionModal').modal('show');
             }); 
-        {%endif %}
+        {% endif %}
+
     </script>
-    
+
     <script>
         $(document).ready(function($) {
             $(".clickable-row").click(function() {

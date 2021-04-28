@@ -1,5 +1,213 @@
 {% extends "admin-election.html" %}
 
 {% block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Settings</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+                <button class="btn btn-sm btn-outline-secondary">{{election.status}}</button>
+                <!--                <button class="btn btn-sm btn-outline-secondary">Export</button>-->
+            </div>
+            <!--
+              <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                <span data-feather="calendar"></span>
+                This week
+              </button>
+-->
+        </div>
+    </div>
+
+    <!-- The main sauce for cards -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <button class="btn btn-md btn-outline-secondary" id="generalButton"><span data-feather="settings"></span> General</button>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-md btn-outline-warning" id="dateButton"><span data-feather="calendar"></span> Dates</button>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-md btn-outline-info" id="emailButton"><span data-feather="mail"></span> Email</button>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-md btn-outline-danger" id="deleteButton" data-toggle="modal" data-target="#deleteModal"><span data-feather="trash"></span> Delete Election</button>
+            </div>
+        </div>
+        <hr>
+        <div class="row mt-5">
+            <section id="generalSection">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card border-secondary mb-3" style="margin-left: 10rem;">
+                            <div class="card-header"><span data-feather="settings"></span> General Settings</div>
+                            <div class="card-body text-primary">
+                                <form method="POST" action="">
+                                    {{edit_name.hidden_tag()}}
+                                    <div class="form-row">
+                                        <div class="form-group col-12" style="width: 35rem;">
+                                            {{ edit_name.name.label(class="form-control-label") }}
+                                            {% if edit_name.name.errors %}
+                                            {{ edit_name.name(class="form-control form-control-lg is-invalid flex-fill") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in edit_name.name.errors %}
+                                                <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                            {% else %}
+                                            {{ edit_name.name(class="form-control form-control-lg flex-fill", placeholder=election.name) }}
+                                            {% endif %}
+                                        </div>
+                                        {{edit_name.submit_name(class="btn btn-primary")}}
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="dateSection">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card border-warning mb-3" style="margin-left: 10rem;">
+                            <div class="card-header"><span data-feather="calendar"></span> Date Settings</div>
+                            <div class="card-body text-primary">
+                                <form method="POST" action="">
+                                    {{edit_name.hidden_tag()}}
+                                    <div class="form-row" style="width: 40rem;">
+                                        <div class="form-group col-12">
+                                            <div class="row">
+                                                <div class="form-group col-12 col-md-6">
+                                                    {{ edit_date.start_date.label(class="form-control-label") }}
+                                                    {% if edit_date.start_date.errors %}
+                                                    {{ edit_date.start_date(class="form-control form-control-lg is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in edit_date.start_date.errors %}
+                                                        <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    {{ edit_date.start_date(class="form-control form-control-lg") }}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="form-group col-12 col-md-6">
+                                                    {{ edit_date.end_date.label(class="form-control-label") }}
+                                                    {% if edit_date.end_date.errors %}
+                                                    {{ edit_date.end_date(class="form-control form-control-lg is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in edit_date.end_date.errors %}
+                                                        <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    {{ edit_date.end_date(class="form-control form-control-lg") }}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="form-group col-12 col-md-6">
+                                                    {{ edit_date.start_time.label(class="form-control-label") }}
+                                                    {% if edit_date.start_time.errors %}
+                                                    {{ edit_date.start_time(class="form-control form-control-lg is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in edit_date.start_time.errors %}
+                                                        <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    {{ edit_date.start_time(class="form-control form-control-lg") }}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="form-group col-12 col-md-6">
+                                                    {{ edit_date.end_time.label(class="form-control-label") }}
+                                                    {% if edit_date.end_time.errors %}
+                                                    {{ edit_date.end_date(class="form-control form-control-lg is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in edit_date.end_time.errors %}
+                                                        <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    {{ edit_date.end_time(class="form-control form-control-lg") }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{edit_date.submit_date(class="btn btn-primary")}}
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="emailSection">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card border-info mb-3" style="margin-left: 10rem;">
+                            <div class="card-header"><span data-feather="mail"></span> Send Email</div>
+                            <div class="card-body text-primary">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</main>
+
+<!--Delete Modal -->
+<div class="modal" tabindex="-1" id="deleteModal" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Election?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{{url_for('admin.election_delete', election_id=election.id)}}" method="POST">
+            <button type="submit" class="btn btn-danger">Delete Election</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock content %}
+
+{% block scripts %}
+
+<script>
+    $(window).on('load', function() {
+        $("#dateSection").hide();
+        $("#emailSection").hide();
+    });
+
+    $("#generalButton").on('click', function() {
+        $("#generalSection").show();
+        $("#dateSection").hide();
+        $("#emailSection").hide();
+    });
+
+    $("#dateButton").on('click', function() {
+        $("#generalSection").hide();
+        $("#dateSection").show();
+        $("#emailSection").hide();
+    });
+
+    $("#emailButton").on('click', function() {
+        $("#generalSection").hide();
+        $("#dateSection").hide();
+        $("#emailSection").show();
+    });
+
+</script>
+
+{% endblock scripts %}

@@ -39,19 +39,19 @@
                 </div>
                 <form method="POST" action="" class="login100-form validate-form">
                     {% with messages = get_flashed_messages(with_categories=true) %}
-                        <!-- This function gets a flashed message when redirected to another page -->
-                        {% if messages%}
-                        {% for category, message in messages%}
-                        <!-- the message it flashes is dependent on the category -->
-                        <div class="alert alert-{{ category }}">
-                            {{ message }}
-                        </div>
-                        {% endfor %}
-                        {% endif %}
-                        {% endwith %}
+                    <!-- This function gets a flashed message when redirected to another page -->
+                    {% if messages%}
+                    {% for category, message in messages%}
+                    <!-- the message it flashes is dependent on the category -->
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
                     <span class="login100-form-title">
                         Admin Login
-                        
+
                     </span>
                     {{ form.hidden_tag() }}
                     <!--might change to username -->

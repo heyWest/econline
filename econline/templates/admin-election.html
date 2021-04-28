@@ -77,6 +77,21 @@
                 </ul>
             </div>
         </nav>
+              <div class="col-4"></div>
+              <div class="col-4">
+                  {% with messages = get_flashed_messages(with_categories=true) %}
+                  <!-- This function gets a flashed message when redirected to another page -->
+                  {% if messages%}
+                  {% for category, message in messages%}
+                  <!-- the message it flashes is dependent on the category -->
+                  <div class="alert alert-{{ category }}">
+                      <span data-feather="alert-circle"></span>{{ message }}
+                  </div>
+                  {% endfor %}
+                  {% endif %}
+                  {% endwith %}
+              </div>
+              <div class="col-4"></div>
 {% block content %}
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
@@ -152,7 +167,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="{{url_for('static', filename='vendor/jquery/jquery-3.2.1.min.js')}}"></script>
     <script>window.jQuery || document.write('<script src="{{url_for("static", filename="js/jquery-slim.min.js")}}"><\/script>')</script>
     <script src="{{url_for('static', filename='vendor/bootstrap/js/popper.js')}}"></script>
     <script src="{{url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js')}}"></script>
@@ -161,6 +176,13 @@
     <script src="{{url_for('static', filename='js/feather.min.js')}}"></script>
     <script>
       feather.replace()
+    </script>
+    <script>
+        // letting the flashed messages disappear
+        setTimeout(function() {
+            $('.alert').fadeOut('fast');
+        }, 3000);
+
     </script>
     
     {% block scripts %}

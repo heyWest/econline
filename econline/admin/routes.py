@@ -4,7 +4,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from econline import bcrypt, db
 import logging
 from econline.models import Admin, Election
-from econline.forms import LoginForm, NewAdminForm, NewElectionForm
+from econline.forms import LoginForm, NewAdminForm, NewElectionForm, EditElectionNameForm, EditElectionDateForm
 import datetime
 
 
@@ -64,8 +64,42 @@ def admin_election(election_id):
 def election_settings(election_id):
     election = Election.query.filter_by(id=election_id).first()
     
-    return render_template('election-settings.html', title=election.name, election=election)
+    edit_name = EditElectionNameForm()
+    if edit_name.submit_name.data and edit_name.validate_on_submit():
+        election.name = edit_name.name.data
+        db.session.commit()
+        flash('Election Name Updated', 'success')
+        return redirect(url_for('admin.election_settings', election_id=election.id))
+    
+    edit_date = EditElectionDateForm()
+    if edit_date.submit_date.data and edit_date.validate_on_submit():
+        start_at = edit_date.start_date.data.strftime("%Y-%m-%d")+ " " + edit_date.end_time.data.strftime("%H:%M")
+        end_at = edit_date.end_date.data.strftime("%Y-%m-%d") + " " + edit_date.end_time.data.strftime("%H:%M")
+        
+        election.start_at = datetime.datetime.strptime(start_at, "%Y-%m-%d %H:%M")
+        election.end_at = datetime.datetime.strptime(end_at, "%Y-%m-%d %H:%M")
+        
+        db.session.commit()
+        flash('Election Date and Time Updated', 'success')
+        return redirect(url_for('admin.election_settings', election_id=election.id))
+    
+    return render_template('election-settings.html', title=election.name, election=election, edit_name=edit_name, edit_date=edit_date)
 
+
+@login_required
+@admin.route('/admin/election/delete', methods=['POST'])
+@admin.route('/admin/election/delete/<election_id>', methods=['POST'])
+def election_delete(election_id):
+    election = Election.query.filter_by(id=election_id).first()
+    if election:
+        db.session.delete(election)
+        db.session.commit()
+        flash('Election Deleted', 'info')
+        return redirect(url_for('admin.admin_landing'))
+    else:
+        flash('Unable to Delete Election', 'warning')
+        return redirect(url_for('admin.admin_landing'))
+    
 
 @login_required
 @admin.route('/admin/election/ballot', methods=['POST', 'GET'])
