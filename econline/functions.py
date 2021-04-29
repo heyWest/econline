@@ -1,12 +1,13 @@
 import os
 import secrets
 from PIL import Image
+from econline import app
 
 
 def save_picture(candidate_name,form_picture):
     random_hex = secrets.token_hex(3)
     _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + candidate_name + f_ext
+    picture_fn = candidate_name + random_hex + f_ext
     picture_path = os.path.join(app.root_path, 'static/candidate_pictures', picture_fn)
     form_picture.save(picture_path)
     

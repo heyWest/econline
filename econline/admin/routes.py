@@ -128,6 +128,48 @@ def election_candidates(election_id):
     return render_template('election-candidates.html', title=election.name, election=election, candidates=candidates, candidate_form=candidate_form)
 
 
+
+
+@login_required
+@admin.route('/admin/election/<election_id>/candidate/<candidate_id>', methods=['POST', 'GET'])
+def candidate_details(election_id, candidate_id):
+    election = Election.query.filter_by(id=election_id).first()
+    candidate = Candidate.query.filter_by(id=candidate_id).first()
+    
+    candidate_form = AddCandidateForm()
+    if candidate_form.validate_on_submit():
+        candidate.name = candidate_form.name.data
+        candidate.portfolio = candidate_form.portfolio.data
+        candidate.campus = candidate_form.campus.data
+        
+        if candidate_form.image_file.data:
+            picture = save_picture(candidate_form.name.data, candidate_form.image_file.data)
+            candidate.image_file = picture
+        
+        db.session.commit()
+        flash('Candidate Details Updated', 'success')
+        return redirect(url_for('admin.candidate_details', election_id=election.id, candidate_id=candidate.id))
+    
+    return render_template('candidate-details.html', title=election.name, election=election, candidate=candidate, candidate_form=candidate_form)
+
+
+
+@login_required
+@admin.route('/admin/election/candidate/delete', methods=['POST'])
+@admin.route('/admin/election/<election_id>/candidate/delete/<candidate_id>', methods=['POST'])
+def candidate_delete(election_id, candidate_id):
+    candidate = Candidate.query.filter_by(id=candidate_id, election_id=election_id).first()
+    
+    if candidate:
+        db.session.delete(candidate)
+        db.session.commit()
+        flash('Candidate Deleted', 'info')
+        return redirect(url_for('admin.election_candidates', election_id=election_id))
+    else:
+        flash('Unable to Delete Election', 'warning')
+        return redirect(url_for('admin.election_candidates', election_id=election_id))
+    
+    
 @login_required
 @admin.route('/admin/election/ballot', methods=['POST', 'GET'])
 @admin.route('/admin/election/ballot/<election_id>', methods=['POST', 'GET'])
