@@ -49,6 +49,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('admin.election_candidates', election_id = election.id)}}">
+                            <span data-feather="user"></span>
+                            Candidates
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{url_for('admin.election_ballot', election_id = election.id)}}">
                             <span data-feather="archive"></span>
                             Ballots
@@ -98,8 +104,7 @@
             <h1 class="h2">Overview</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
               <div class="btn-group mr-2">
-                <button class="btn btn-sm btn-outline-secondary">{{election.status}}</button>
-<!--                <button class="btn btn-sm btn-outline-secondary">Export</button>-->
+                <button class="btn btn-sm btn-outline-secondary" disabled>{{election.status}}</button>
               </div>
 <!--
               <button class="btn btn-sm btn-outline-secondary dropdown-toggle">

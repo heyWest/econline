@@ -79,3 +79,11 @@ class EditElectionDateForm(FlaskForm):
     def validate_dates(self, start_date, end_date):
         if start_date.data < end_date.data:
             raise ValidationError('Please check the dates!')
+            
+
+class AddCandidateForm(FlaskForm):
+    name = StringField('Candidate Name', validators=[DataRequired(), Length(min=2, max=100)])
+    portfolio = SelectField(u'Portfolio', choices=[('President', 'President'), ('Vice President', 'Vice Preisdent'), ('Treasurer', 'Treasurer')])
+    image_file = FileField('Candidate Picture', validators=[FileAllowed(['jpg', 'png'])])
+    campus = SelectField(u'Campus', choices=[('Main', 'Main Campus'), ('City', 'City Campus')])
+    

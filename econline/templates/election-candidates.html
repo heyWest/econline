@@ -1,0 +1,187 @@
+{% extends "admin-election.html" %}
+
+{% block content %}
+
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Candidates</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+                <button class="btn btn-sm btn-outline-secondary">{{election.status}}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- The main sauce for cards -->
+    <div class="container">
+        <!--
+        <div class="row">
+            <div class="col-md-3">
+                <button class="btn btn-md btn-outline-secondary" id="generalButton"><span data-feather="settings"></span> General</button>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-md btn-outline-warning" id="dateButton"><span data-feather="calendar"></span> Dates</button>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-md btn-outline-info" id="emailButton"><span data-feather="mail"></span> Email</button>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-md btn-outline-danger" id="deleteButton" data-toggle="modal" data-target="#deleteModal"><span data-feather="trash"></span> Delete Election</button>
+            </div>
+        </div>
+-->
+        {% if candidates | length == 0 %}
+        <div class="row mt-5">
+            <section class="jumbotron text-center bg-white" style="margin-left: 6rem;">
+                <div class="container-fluid">
+                    <h1 class="jumbotron-heading">You have no candidates for this election!</h1>
+                    <p class="lead text-muted">Get started by adding your first candidate</p>
+                    <p>
+                        <!--animate button later -->
+                        <a href="#" class="btn btn-outline-info btn-lg my-2" aria-pressed="true" role="button" data-toggle="modal" data-target="#addCandidateModal"><i class="fa fa-plus-square"></i> Add Candidate</a>
+                    </p>
+                </div>
+            </section>
+        </div>
+        {% else %}
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <button class="btn btn-md btn-outline-info" id="addCandidateButton" style="margin-left: 5rem;" data-toggle="modal" data-target="#addCandidateModal"><span data-feather="user-plus"></span> Add Candidate</button>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <section id="candidatesTable">
+                <div class="row">
+                    <div class="container">
+                        <table class="table table-bordered table-hover" style="margin-left: 10rem;">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Candidate Name</th>
+                                    <th scope="col">Portfolio</th>
+                                    <th scope="col">Campus</th>
+                                    {% if election_status != "Building" %}
+                                    <th scope="col">No. of Votes</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for candidate in candidates %}
+                                <tr class="clickable-row" data-href="">
+                                    <td>{{candidate.name}}</td>
+                                    <td>{{candidate.portfolio}}</td>
+                                    <td>{{candidate.campus}}</td>
+                                    <td>{{candidate.votes_number}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-info table-bordered">
+                                    <td>Total Numer of Candidates:</td>
+                                    <td>{{candidates | length}}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+        {% endif %}
+
+    </div>
+</main>
+
+
+<!-- Add Candidate Modal -->
+<div class="modal fade" id="addCandidateModal" tabindex="-1" role="dialog" aria-labelledby="createElectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-center" id="createElectionModalLabel">Add New Candidate</h3>
+                <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="POST" action="">
+                <div class="modal-body">
+                    {{candidate_form.hidden_tag()}}
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            {{ candidate_form.name.label(class="form-control-label") }}
+                            {% if candidate_form.name.errors %}
+                            {{ candidate_form.name(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in candidate_form.name.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ candidate_form.name(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group col-12 col-md-6">
+                            {{ candidate_form.portfolio.label(class="form-control-label") }}
+                            {% if candidate_form.portfolio.errors %}
+                            {{candidate_form.portfolio(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in candidate_form.portfolio.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{candidate_form.portfolio(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group col-12 col-md-6">
+                            {{ candidate_form.campus.label(class="form-control-label") }}
+                            {% if candidate_form.campus.errors %}
+                            {{ candidate_form.campus(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in candidate_form.campus.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ candidate_form.campus(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group col-12 col-md-6">
+                            {{ candidate_form.image_file.label(class="form-control-label") }}
+                            {% if candidate_form.image_file.errors %}
+                            {{ candidate_form.image_file(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in candidate_form.image_file.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ candidate_form.image_file(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer mt-auto">
+                    <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create Candidate</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function($) {
+        $(".clickable-row").click(function() {
+            window.document.location = $(this).data("href");
+        });
+    });
+
+</script>
+{% endblock scripts %}

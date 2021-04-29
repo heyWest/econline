@@ -3,8 +3,9 @@ from flask import render_template, url_for, redirect, request, jsonify, make_res
 from flask_login import login_user, current_user, logout_user, login_required
 from econline import bcrypt, db
 import logging
-from econline.models import Admin, Election
-from econline.forms import LoginForm, NewAdminForm, NewElectionForm, EditElectionNameForm, EditElectionDateForm
+from econline.models import Admin, Election, Candidate
+from econline.functions import save_picture
+from econline.forms import LoginForm, NewAdminForm, NewElectionForm, EditElectionNameForm, EditElectionDateForm, AddCandidateForm
 import datetime
 
 
@@ -100,6 +101,32 @@ def election_delete(election_id):
         flash('Unable to Delete Election', 'warning')
         return redirect(url_for('admin.admin_landing'))
     
+
+    
+@login_required
+@admin.route('/admin/election/candidates', methods=['POST', 'GET'])
+@admin.route('/admin/election/candidates/<election_id>', methods=['POST', 'GET'])
+def election_candidates(election_id):
+    election = Election.query.filter_by(id=election_id).first()
+    candidates = Candidate.query.filter_by(election_id=election.id).all()
+    print(candidates)
+    
+    candidate_form = AddCandidateForm()
+    if request.method=="POST" and candidate_form.validate_on_submit():
+        if candidate_form.image_file.data:
+            picture = save_picture(candidate_form.name.data, candidate_form.image_file.data)
+            new_candidate = Candidate(election_id=election.id, name=candidate_form.name.data, portfolio=candidate_form.portfolio.data, campus=candidate_form.campus.data,
+                                 image_file=picture)
+        else:
+            new_candidate = Candidate(election_id=election.id, name=candidate_form.name.data, portfolio=candidate_form.portfolio.data, campus=candidate_form.campus.data)
+            
+        db.session.add(new_candidate)
+        db.session.commit()
+        
+        return redirect(url_for('admin.election_candidates', election_id=election.id))
+    
+    return render_template('election-candidates.html', title=election.name, election=election, candidates=candidates, candidate_form=candidate_form)
+
 
 @login_required
 @admin.route('/admin/election/ballot', methods=['POST', 'GET'])
