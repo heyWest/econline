@@ -4,8 +4,8 @@ from flask_login import login_user, current_user, logout_user, login_required
 from econline import bcrypt, db
 import logging
 from econline.models import Admin, Election, Candidate, Voter
-from econline.functions import save_picture
-from econline.forms import LoginForm, NewAdminForm, NewElectionForm, EditElectionNameForm, EditElectionDateForm, AddCandidateForm, ImportVotersForm
+from econline.functions import save_picture, send_mail, generate_confirmation_token
+from econline.forms import LoginForm, NewAdminForm, NewElectionForm, EditElectionNameForm, EditElectionDateForm, AddCandidateForm, ImportVotersForm, EmailForm, MassEmailForm
 import datetime
 import csv
 import io
@@ -66,6 +66,7 @@ def admin_election(election_id):
 def election_settings(election_id):
     election = Election.query.filter_by(id=election_id).first()
     
+    
     edit_name = EditElectionNameForm()
     if edit_name.submit_name.data and edit_name.validate_on_submit():
         election.name = edit_name.name.data
@@ -85,7 +86,30 @@ def election_settings(election_id):
         flash('Election Date and Time Updated', 'success')
         return redirect(url_for('admin.election_settings', election_id=election.id))
     
-    return render_template('election-settings.html', title=election.name, election=election, edit_name=edit_name, edit_date=edit_date)
+    email_form = EmailForm()
+    if email_form.send_email.data and email_form.validate_on_submit():
+        emails = email_form.recipients.data.split(',')
+        html = email_form.message.data
+        subject = mail_form.subject.data
+        for email in emails:
+            send_mail(email, html, subject)
+        
+        flash('Email Sent', 'success')
+        return redirect(url_for('admin.election_settings', election_id=election.id))
+    
+    mass_form = MassEmailForm()
+    if mass_form.send_mass.data and mass_form.validate_on_submit():
+        voters = Voter.qeury.filter_by(election_id=election.id).all()
+        html = mass_form.message.data
+        subject = mass_form.subject.data
+        for voter in voters:
+            send_mail(voter.email, html, subject)
+        
+        flash('Email Sent', 'success')
+        return redirect(url_for('admin.election_settings', election_id=election.id))
+        
+        
+    return render_template('election-settings.html', title=election.name, election=election, edit_name=edit_name, edit_date=edit_date, email_form=email_form, mass_form=mass_form)
 
 
 @login_required
@@ -103,7 +127,6 @@ def election_delete(election_id):
         return redirect(url_for('admin.admin_landing'))
     
 
-    
 @login_required
 @admin.route('/admin/election/candidates', methods=['POST', 'GET'])
 @admin.route('/admin/election/candidates/<election_id>', methods=['POST', 'GET'])
@@ -129,8 +152,6 @@ def election_candidates(election_id):
     return render_template('election-candidates.html', title=election.name, election=election, candidates=candidates, candidate_form=candidate_form)
 
 
-
-
 @login_required
 @admin.route('/admin/election/<election_id>/candidate/<candidate_id>', methods=['POST', 'GET'])
 def candidate_details(election_id, candidate_id):
@@ -152,7 +173,6 @@ def candidate_details(election_id, candidate_id):
         return redirect(url_for('admin.candidate_details', election_id=election.id, candidate_id=candidate.id))
     
     return render_template('candidate-details.html', title=election.name, election=election, candidate=candidate, candidate_form=candidate_form)
-
 
 
 @login_required
@@ -206,12 +226,48 @@ def election_voters(election_id):
 
 
 @login_required
+@admin.route('/admin/election/voters/delete', methods=['POST'])
+@admin.route('/admin/election/voters/delete/<election_id>', methods=['POST'])
+def delete_voters(election_id):
+    voters = Voter.query.filter_by(election_id=election_id).all()
+    if voters:
+        for voter in voters:
+            db.session.delete(voter)
+            db.session.commit()
+
+        flash('Voter Database Deleted', 'success')
+    else:
+        flash('No Voter Database detected!', 'danger')
+    return redirect(url_for('admin.election_voters', election_id=election_id))
+
+
+@login_required
 @admin.route('/admin/election/analyse', methods=['POST', 'GET'])
 @admin.route('/admin/election/analyse/<election_id>', methods=['POST', 'GET'])
 def election_analyse(election_id):
     election = Election.query.filter_by(id=election_id).first()
     
     return render_template('election-analyse.html', title=election.name, election=election)
+
+
+@login_required
+@admin.route('/admin/election/launch', methods=['POST', 'GET'])
+@admin.route('/admin/election/launch/<election_id>', methods=['POST', 'GET'])
+def launch_election(election_id):
+    election=Election.query.filter_by(id=election_id).first()
+    voters = Voter.query.filter_by(election_id=election_id).all()
+    
+    election.status = "Ongoing"
+    for voter in voters:
+        unique_token = generate_confirmation_token(voter.email)
+        voting_url = url_for('voters.voters_landing', token=unique_token, _external=True)
+        html = "Voting has begun. Click on this link to vote: " + voting_url
+        subject = "Vote for your BHJCR Executives"
+        send_mail(voter.email, subject, html)
+    
+    db.session.commit()
+    flash('The Voting Process has Begun!', 'info')
+    return redirect(url_for('admin.election_settings', election_id=election.id))
 
 
 @login_required

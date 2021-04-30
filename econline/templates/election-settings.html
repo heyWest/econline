@@ -44,21 +44,25 @@
                             <div class="card-body text-primary">
                                 <form method="POST" action="">
                                     {{edit_name.hidden_tag()}}
-                                    <div class="form-row">
-                                        <div class="form-group col-12" style="width: 35rem;">
-                                            {{ edit_name.name.label(class="form-control-label") }}
-                                            {% if edit_name.name.errors %}
-                                            {{ edit_name.name(class="form-control form-control-lg is-invalid flex-fill") }}
-                                            <div class="invalid-feedback">
-                                                {% for error in edit_name.name.errors %}
-                                                <span>{{ error }}</span>
-                                                {% endfor %}
+                                    <div class="form-row" style="width: 100%;">
+                                        <div class="form-group col-12">
+                                            <div class="row">
+                                                <div class="form-group col-12">
+                                                    {{ edit_name.name.label(class="form-control-label") }}
+                                                    {% if edit_name.name.errors %}
+                                                    {{ edit_name.name(class="form-control form-control-lg is-invalid flex-fill") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in edit_name.name.errors %}
+                                                        <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    {{ edit_name.name(class="form-control form-control-lg flex-fill", placeholder=election.name) }}
+                                                    {% endif %}
+                                                </div>
+                                                &nbsp;{{edit_name.submit_name(class="btn btn-primary")}}
                                             </div>
-                                            {% else %}
-                                            {{ edit_name.name(class="form-control form-control-lg flex-fill", placeholder=election.name) }}
-                                            {% endif %}
                                         </div>
-                                        {{edit_name.submit_name(class="btn btn-primary")}}
                                     </div>
                                 </form>
                             </div>
@@ -75,7 +79,7 @@
                             <div class="card-body text-primary">
                                 <form method="POST" action="">
                                     {{edit_date.hidden_tag()}}
-                                    <div class="form-row" style="width: 40rem;">
+                                    <div class="form-row" style="width: 100%;">
                                         <div class="form-group col-12">
                                             <div class="row">
                                                 <div class="form-group col-12 col-md-6">
@@ -147,13 +151,109 @@
                         <div class="card border-info mb-3" style="margin: 0 auto;">
                             <div class="card-header"><span data-feather="mail"></span> Send Email</div>
                             <div class="card-body text-primary">
-
+                                <form action="" method="POST">
+                                    {{email_form.hidden_tag()}}
+                                    <div class="form-row" style="width: 100%;">
+                                        <div class="form-group col-12">
+                                            <div class="row">
+                                                <div class="form-group col-12">
+                                                    {{ email_form.recipients.label(class="form-control-label") }}
+                                                    {% if email_form.recipients.errors %}
+                                                    {{ email_form.recipients(class="form-control form-control-lg is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in email_form.recipients.errors %}
+                                                        <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    {{ email_form.recipients(class="form-control form-control-lg") }}
+                                                    {% endif %}
+                                                    <p class="font-weight-bold">You can enter multiple emails separated by commas</p>
+                                                </div>
+                                                <div class="form-group col-12">
+                                                    {{ email_form.subject.label(class="form-control-label") }}
+                                                    {% if email_form.subject.errors %}
+                                                    {{ email_form.subject(class="form-control form-control-lg is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in email_form.subject.errors %}
+                                                        <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    {{ email_form.subject(class="form-control form-control-lg") }}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="form-group col-12">
+                                                    {{ email_form.message.label(class="form-control-label") }}
+                                                    {% if email_form.message.errors %}
+                                                    {{ email_form.message(rows="10", class="form-control form-control-lg is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in email_form.message.errors %}
+                                                        <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    {{ email_form.message(rows="10", class="form-control form-control-lg") }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{email_form.send_email(class="btn btn-primary")}}
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mass Email Section -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card border-info mb-3" style="margin: 0 auto;">
+                            <div class="card-header"><span data-feather="mail"></span> Send Mass Email</div>
+                            <div class="card-body text-primary">
+                                <form action="" method="POST">
+                                    {{mass_form.hidden_tag()}}
+                                    <div class="form-row" style="width: 100%;">
+                                        <div class="form-group col-12">
+                                            <div class="row">
+                                                <div class="form-group col-12">
+                                                    {{ mass_form.subject.label(class="form-control-label") }}
+                                                    {% if mass_form.subject.errors %}
+                                                    {{ mass_form.subject(class="form-control form-control-lg is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in mass_form.subject.errors %}
+                                                        <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    {{ mass_form.subject(class="form-control form-control-lg") }}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="form-group col-12">
+                                                    <p class="font-weight-bold">This Email form sends an email to every voter!</p>
+                                                    {{ mass_form.message.label(class="form-control-label") }}
+                                                    {% if mass_form.message.errors %}
+                                                    {{ mass_form.message(rows="10", class="form-control form-control-lg is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in mass_form.message.errors %}
+                                                        <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    {{ mass_form.message(rows="10", class="form-control form-control-lg") }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{mass_form.send_mass(class="btn btn-primary")}}
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-
         </div>
     </div>
 </main>

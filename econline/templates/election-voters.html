@@ -32,9 +32,12 @@
         {% else %}
         <div class="row">
             <div class="col-md-4"></div>
-            <div class="col-md-4"></div>
             <div class="col-md-4">
-                <button class="btn btn-md btn-outline-info" id="addVoterButton" style="margin-left: 5rem;" data-toggle="modal" data-target="#addCandidateModal"><span data-feather="user-plus"></span> Add Voter</button>
+                <p class="font-weight-bold">You have a total of: {{voters | length}} Voters!</p>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-md btn-outline-info" id="addVoterButton" style="margin-left: auto;" data-toggle="modal" data-target="#addCandidateModal"><span data-feather="user-plus"></span> Add Voter</button>
+                <button class="btn btn-md btn-outline-danger" id="deleteVotersButton" data-toggle="modal" data-target="#deleteVotersModal" style="margin-left: auto;" ><span data-feather="trash"></span> Delete Database</button>
             </div>
         </div>
         <div class="row mt-3">
@@ -120,7 +123,27 @@
     </div>
 </div>
 
-
+<!--Delete Modal -->
+<div class="modal" tabindex="-1" id="deleteVotersModal" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Voter Database?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{{url_for('admin.delete_voters', election_id=election.id)}}" method="POST">
+            <button type="submit" class="btn btn-danger">Delete Voters</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock content %}
 
 {% block scripts %}

@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationE
 from econline.models import Admin, Election
 from flask_login import current_user
 from datetime import datetime
-
+from wtforms.widgets import TextArea
 
 class LoginForm(FlaskForm):
     email = StringField('Email',
@@ -91,3 +91,16 @@ class AddCandidateForm(FlaskForm):
 class ImportVotersForm(FlaskForm):
     voters = FileField('Import Voters', validators=[DataRequired(), FileAllowed(['csv'])])
     submit_voters = SubmitField('Import')
+    
+
+class EmailForm(FlaskForm):
+    recipients = StringField('Email(s)', validators=[DataRequired()])
+    subject = StringField('Subject', validators=[DataRequired(), Length(min=2, max=100)])
+    message = StringField('Message', widget=TextArea(), validators=[DataRequired()])
+    send_email = SubmitField('Send Email')
+    
+    
+class MassEmailForm(FlaskForm):
+    subject = StringField('Subject', validators=[DataRequired(), Length(min=2, max=100)])
+    message = StringField('Message', widget=TextArea(), validators=[DataRequired()])
+    send_mass = SubmitField('Send Email')
