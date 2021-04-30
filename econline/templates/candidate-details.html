@@ -158,3 +158,13 @@
 </div>
 
 {% endblock content %}
+
+{% block scripts %}
+    <script>
+        {% if candidate_form.errors %}
+            $(window).on('load', function() {
+                $('#editCandidateModal').modal('show');
+            }); 
+        {% endif %}
+    </script>
+{% endblock scripts%}

@@ -2,4 +2,142 @@
 
 {% block content %}
 
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Voters</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+                <button class="btn btn-sm btn-outline-secondary">{{election.status}}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- The main sauce for cards -->
+    <div class="container">
+        {% if voters | length == 0 %}
+        <div class="row mt-5">
+            <section class="jumbotron text-center bg-white" style="margin: 0 auto;">
+                <div class="container-fluid">
+                    <h1 class="jumbotron-heading">You have no voters for this election!</h1>
+                    <p class="lead text-muted">Get started by adding your first voters</p>
+                    <p>
+                        <!--animate button later -->
+                       {# <a href="#" class="btn btn-outline-info btn-lg my-2" aria-pressed="true" role="button" data-toggle="modal" data-target="#addVoterModal"><i class="fa fa-plus-square"></i> Add Voter</a>
+                        &nbsp;#}
+                        <a href="#" class="btn btn-outline-info btn-lg my-2" aria-pressed="true" role="button" data-toggle="modal" data-target="#importVoterModal"><i class="fa fa-upload"></i> Import Voters</a>
+                    </p>
+                </div>
+            </section>
+        </div>
+        {% else %}
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <button class="btn btn-md btn-outline-info" id="addVoterButton" style="margin-left: 5rem;" data-toggle="modal" data-target="#addCandidateModal"><span data-feather="user-plus"></span> Add Voter</button>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <section id="candidatesTable">
+                <div class="row">
+                    <div class="container">
+                        <table class="table table-bordered table-hover" style="margin: 0 auto;">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Voter Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Index No.</th>
+                                    <th scope="col">Campus</th>
+                                    {% if election.status != "Building" %}
+                                    <th scope="col">Has Voted</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for voter in voters %}
+                                <tr class="clickable-row" data-href="#">
+                                    <td>{{voter.name}}</td>
+                                    <td>{{voter.email}}</td>
+                                    <td>{{voter.index_number}}</td>
+                                    <td>{{voter.campus}}</td>
+                                    {% if election.status != "Building" %}
+                                    <td>{{voter.has_voted}}</td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-info table-bordered">
+                                    <td>Total Numer of Voters:</td>
+                                    <td>{{voters | length}}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                    </div>
+                </div>
+            </section>
+        </div> 
+        {% endif %}
+
+    </div>
+</main>
+
+<!--Import Voters Modal -->
+<div class="modal" tabindex="-1" id="importVoterModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Importing Voters</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="POST" enctype="multipart/form-data">
+                    {{import_voters.hidden_tag()}}
+                    <div class="form-group col-12 col-md-12">
+                        {{ import_voters.voters.label(class="form-control-label") }}
+                        {% if import_voters.voters.errors %}
+                        {{ import_voters.voters(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in import_voters.voters.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ import_voters.voters(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    
+                    {{import_voters.submit_voters(class="btn btn-outline-primary")}}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 {% endblock content %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function($) {
+        $(".clickable-row").click(function() {
+            window.document.location = $(this).data("href");
+        });
+    });
+
+</script>
+<script>
+    {% if import_voters.errors %}
+        $(window).on('load', function() {
+            $('#importVoterModal').modal('show');
+        }); 
+    {% endif %}
+</script>
+
+{% endblock scripts %}

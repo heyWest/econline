@@ -87,3 +87,7 @@ class AddCandidateForm(FlaskForm):
     image_file = FileField('Candidate Picture', validators=[FileAllowed(['jpg', 'png'])])
     campus = SelectField(u'Campus', choices=[('Main', 'Main Campus'), ('City', 'City Campus')])
     
+    
+class ImportVotersForm(FlaskForm):
+    voters = FileField('Import Voters', validators=[DataRequired(), FileAllowed(['csv'])])
+    submit_voters = SubmitField('Import')

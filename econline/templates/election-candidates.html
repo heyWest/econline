@@ -32,7 +32,7 @@
             <div class="col-md-4"></div>
             <div class="col-md-4"></div>
             <div class="col-md-4">
-                <button class="btn btn-md btn-outline-info" id="addCandidateButton" style="margin-left: 5rem;" data-toggle="modal" data-target="#addCandidateModal"><span data-feather="user-plus"></span> Add Candidate</button>
+                <button class="btn btn-md btn-outline-info" id="addCandidateButton" style="margin: 0 auto;" data-toggle="modal" data-target="#addCandidateModal"><span data-feather="user-plus"></span> Add Candidate</button>
             </div>
         </div>
 
@@ -40,7 +40,7 @@
             <section id="candidatesTable">
                 <div class="row">
                     <div class="container">
-                        <table class="table table-bordered table-hover" style="margin-left: 10rem;">
+                        <table class="table table-bordered table-hover" style="margin:0 auto;">
                             <thead class="table-dark">
                                 <tr>
                                     <th scope="col">Candidate Name</th>
@@ -168,4 +168,13 @@
     });
 
 </script>
+
+    <script>
+        {% if candidate_form.errors %}
+            $(window).on('load', function() {
+                $('#addCandidateModal').modal('show');
+            }); 
+        {% endif %}
+
+    </script>
 {% endblock scripts %}

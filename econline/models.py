@@ -32,7 +32,7 @@ class Voter(db.Model):
     index_number = db.Column(db.Integer, unique=True, nullable=False)
     campus = db.Column(db.String(20), nullable=False)
     election_id = db.Column(db.String(20), db.ForeignKey('election.id'), nullable=False)
-    has_voted = db.Column(db.Integer, nullable=False, default=0)
+#    has_voted = db.Column(db.Integer, nullable=False, default=0)
     
 
 class Candidate(db.Model):
