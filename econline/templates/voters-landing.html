@@ -1,1 +1,115 @@
-They will confirm it here!!
+<!doctype html>
+<html lang="en">
+
+<head>
+    {% if title %}
+    <title>{{title}} | BHJCR Online</title>
+    {% else %}
+    <title>BHJCR Online</title>
+    {% endif %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='assets/img/favicon.ico')}}" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css')}}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='fonts/font-awesome-4.7.0/css/font-awesome.min.css')}}">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/admin-election.css')}}">
+    <!--===============================================================================================-->
+
+</head>
+
+<body>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Election Name here</a>
+        <input class="form-control form-control-dark w-100" type="text" placeholder="" aria-label="Search" disabled>
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap">
+                <!--          <a class="nav-link" href="{{url_for('admin.admin_landing')}}">Back</a>-->
+            </li>
+        </ul>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                <!-- This function gets a flashed message when redirected to another page -->
+                {% if messages%}
+                {% for category, message in messages%}
+                <!-- the message it flashes is dependent on the category -->
+                <div class="alert alert-{{ category }}">
+                    <span data-feather="alert-circle"></span>{{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+            <div class="col-4"></div>
+            {% block content %}
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                    <h1 class="h2" style="margin: 0 auto;">Confirm Your Details</h1>
+                </div>
+                
+                <!-- The main sauce for cards -->
+                <div class="container">
+                    <div class="card border-info text-center mb-3" style="max-width: 30rem; margin: 0 auto;">
+                        <div class="card-header">Are these right?</div>
+                        <div class="card-body text-info">
+                            <h5 class="card-title">Voter's Name</h5>
+                            <p class="card-text">Voter's Email</p>
+                            <p class="card-text">Voter's Campus</p>
+
+                            <form method="POST" action="{{url_for('voters.voters_landing')}}">
+                                <div class="form-group">
+                                    <label for="index_number">Enter Your Index Number: </label>
+                                    <input type="text" class="form-control col-6" id="index_number" name="index_number" style="margin: 0 auto;" placeholder="*******">
+                                    
+                                    <button class="btn btn-outline-info mt-2" type="submit">Verify Details</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+            </main>
+            {% endblock content %}
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{url_for('static', filename='vendor/jquery/jquery-3.2.1.min.js')}}"></script>
+    <script>
+        window.jQuery || document.write('<script src="{{url_for("static", filename="js/jquery-slim.min.js")}}"><\/script>')
+
+    </script>
+    <script src="{{url_for('static', filename='vendor/bootstrap/js/popper.js')}}"></script>
+    <script src="{{url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js')}}"></script>
+
+    <!-- Icons -->
+    <script src="{{url_for('static', filename='js/feather.min.js')}}"></script>
+    <script>
+        feather.replace()
+
+    </script>
+    <script>
+        // letting the flashed messages disappear
+        setTimeout(function() {
+            $('.alert').fadeOut('fast');
+        }, 3000);
+
+    </script>
+
+    {% block scripts %}
+    {% endblock scripts %}
+
+</body>
+
+</html>

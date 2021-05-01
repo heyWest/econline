@@ -1,0 +1,390 @@
+{% extends "voters-landing.html" %}
+
+{% block content %}
+
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h4 class="h4" style="margin: 0 auto;">Vote Your Candidate</h4>
+    </div>
+
+    <!-- The main sauce for cards -->
+    <div class="container">
+        {# This side is for the main campus people #}
+        <section class="tab" id="presidentTab" style="margin: 0 auto;">
+            <div class="card border-info text-center mb-3" style="max-width: 30rem; margin: 0 auto;">
+                <div class="card-header">Presidential Candidate</div>
+                <div class="card-body text-info">
+                    <h5 class="card-title">Candidate1 Name</h5>
+                    <p class="card-text">Voter's Campus</p>
+                    <button class="voter1" id="candidate-1" value="Can1P">Select Candidate</button>
+
+                </div>
+            </div>
+
+            <div class="card border-info text-center mb-3" style="max-width: 30rem; margin: 0 auto;">
+                <div class="card-header">Presidential Candidate</div>
+                <div class="card-body text-info">
+                    <h5 class="card-title">Candidate2 Name</h5>
+                    <p class="card-text">Voter's Campus</p>
+                    <button class="voter1" id="candidate-2" value="Can2P">Select Candidate</button>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="tab" id="vicePresidentTab" style="margin: 0 auto; display: none;">
+            <div class="card border-info text-center mb-3" style="max-width: 30rem; margin: 0 auto;">
+                <div class="card-header">Vice Presidential Candidate</div>
+                <div class="card-body text-info">
+                    <h5 class="card-title">Candidate1 Name</h5>
+                    <p class="card-text">Voter's Campus</p>
+                    <button class="voter2" id="candidate-3" value="Can1V">Select Candidate</button>
+
+                </div>
+            </div>
+
+            <div class="card border-info text-center mb-3" style="max-width: 30rem; margin: 0 auto;">
+                <div class="card-header">Vice Presidential Candidate</div>
+                <div class="card-body text-info">
+                    <h5 class="card-title">Candidate2 Name</h5>
+                    <p class="card-text">Voter's Campus</p>
+                    <button class="voter2" id="candidate-4" value="Can2V">Select Candidate</button>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="tab" id="financialTab" style="margin: 0 auto; display: none;">
+            <div class="card border-info text-center mb-3" style="max-width: 30rem; margin: 0 auto;">
+                <div class="card-header">Financial Controller Candidate</div>
+                <div class="card-body text-info">
+                    <h5 class="card-title">Candidate1 Name</h5>
+                    <p class="card-text">Voter's Campus</p>
+                    <button class="voter" id="candidate-5" value="Can1F">Select Candidate</button>
+
+                </div>
+            </div>
+
+            <div class="card border-info text-center mb-3" style="max-width: 30rem; margin: 0 auto;">
+                <div class="card-header">Financial Controller Candidate</div>
+                <div class="card-body text-info">
+                    <h5 class="card-title">Candidate2 Name</h5>
+                    <p class="card-text">Voter's Campus</p>
+                    <button class="voter" id="candidate-6" value="Can2F">Select Candidate</button>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="tab" id="secretaryTab" style="margin: 0 auto; display: none;">
+            <div class="card border-info text-center mb-3" style="max-width: 30rem; margin: 0 auto;">
+                <div class="card-header">Secretary Candidate</div>
+                <div class="card-body text-info">
+                    <h5 class="card-title">Candidate1 Name</h5>
+                    <p class="card-text">Voter's Campus</p>
+                    <button class="voter" id="candidate-7" value="Can1S">Select Candidate</button>
+                    
+                </div>
+            </div>
+
+            <div class="card border-info text-center mb-3" style="max-width: 30rem; margin: 0 auto;">
+                <div class="card-header">Secretary Candidate</div>
+                <div class="card-body text-info">
+                    <h5 class="card-title">Candidate1 Name</h5>
+                    <p class="card-text">Voter's Campus</p>
+                    <button class="voter" id="candidate-8" value="Can2S">Select Candidate</button>
+
+                </div>
+            </div>
+        </section>
+
+        <!--
+        {# This side is for the city campus people #}
+        <section id="cityViceTab" style="margin: 0 auto; max-width:100%;">
+
+        </section>
+
+        <section id="treasurerTab" style="margin: 0 auto; max-width:100%;">
+
+        </section>
+
+        <section id="coordinatorTab" style="margin: 0 auto; max-width:100%;">
+
+        </section>
+-->
+
+
+        <form method='POST' id="voted" action='{{url_for("voters.voters_vote", election_id=1, index_number=9335510)}}'>
+            <input id="votedList" name="votedList" value="" hidden>
+        <div style="margin:0 auto;">
+            <div style="margin: 0 auto;">
+                <button type="button" class="btn btn-outline-info" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
+                <button type="button" class="btn btn-outline-info" id="nextBtn" onclick="nextPrev(1)">Next</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</main>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+//handler for the list to be submitted
+var votedArr = [];
+
+// check if
+// handler for buttons, yea it's amateurish, leave me
+$('#candidate-1').on('click', function(e){
+    if(e.target.textContent == 'Select Candidate'){
+        e.target.textContent = 'Candidate Selected';
+        if(!votedArr.includes(e.target.value)){//if the array doesn't contain the value when the candidate is selected push it into the array
+            votedArr.push(e.target.value);
+        }
+        
+        //removes the candidate 2 from the array
+        value2 = $('#candidate-2').val();
+        if(votedArr.includes(value2)){
+            index = votedArr.indexOf(value2);
+            votedArr.splice(index, 1);
+        }
+        
+    } else { //if it is unselected remove the id from the place
+        e.target.textContent = 'Select Candidate';
+        index = votedArr.indexOf(e.target.value);
+        votedArr.splice(index, 1);
+    }
+    
+    
+    $('#candidate-2').html("Select Candidate");
+    console.log(votedArr);
+
+   
+});
+
+$('#candidate-2').on('click', function(e){
+    if(e.target.textContent == 'Select Candidate'){
+        e.target.textContent = 'Candidate Selected';
+        if(!votedArr.includes(e.target.value)){//if the array doesn't contain the value when the candidate is selected push it into the array
+            votedArr.push(e.target.value);
+        }
+        
+        //removes the candidate 1 from the array
+        value2 = $('#candidate-1').val();
+        if(votedArr.includes(value2)){
+            index = votedArr.indexOf(value2);
+            votedArr.splice(index, 1);
+        }
+        
+    } else { //if it is unselected remove the id from the place
+        e.target.textContent = 'Select Candidate';
+        index = votedArr.indexOf(e.target.value);
+        votedArr.splice(index, 1);
+    }
+    
+    
+    $('#candidate-1').html("Select Candidate");
+    console.log(votedArr);
+   
+     
+});
+    
+$('#candidate-3').on('click', function(e){
+    if(e.target.textContent == 'Select Candidate'){
+        e.target.textContent = 'Candidate Selected';
+        if(!votedArr.includes(e.target.value)){//if the array doesn't contain the value when the candidate is selected push it into the array
+            votedArr.push(e.target.value);
+        }
+        
+        //removes the candidate 1 from the array
+        value2 = $('#candidate-4').val();
+        if(votedArr.includes(value2)){
+            index = votedArr.indexOf(value2);
+            votedArr.splice(index, 1);
+        }
+        
+    } else { //if it is unselected remove the id from the place
+        e.target.textContent = 'Select Candidate';
+        index = votedArr.indexOf(e.target.value);
+        votedArr.splice(index, 1);
+    }
+    
+    
+    $('#candidate-4').html("Select Candidate");
+    console.log(votedArr);
+
+});
+
+$('#candidate-4').on('click', function(e){
+    if(e.target.textContent == 'Select Candidate'){
+        e.target.textContent = 'Candidate Selected';
+        if(!votedArr.includes(e.target.value)){//if the array doesn't contain the value when the candidate is selected push it into the array
+            votedArr.push(e.target.value);
+        }
+        
+        //removes the candidate 1 from the array
+        value2 = $('#candidate-3').val();
+        if(votedArr.includes(value2)){
+            index = votedArr.indexOf(value2);
+            votedArr.splice(index, 1);
+        }
+        
+    } else { //if it is unselected remove the id from the place
+        e.target.textContent = 'Select Candidate';
+        index = votedArr.indexOf(e.target.value);
+        votedArr.splice(index, 1);
+    }
+    
+    
+    $('#candidate-3').html("Select Candidate");
+    console.log(votedArr);
+});
+    
+    
+$('#candidate-5').on('click', function(e){
+    if(e.target.textContent == 'Select Candidate'){
+        e.target.textContent = 'Candidate Selected';
+        if(!votedArr.includes(e.target.value)){//if the array doesn't contain the value when the candidate is selected push it into the array
+            votedArr.push(e.target.value);
+        }
+        
+        //removes the candidate 1 from the array
+        value2 = $('#candidate-6').val();
+        if(votedArr.includes(value2)){
+            index = votedArr.indexOf(value2);
+            votedArr.splice(index, 1);
+        }
+        
+    } else { //if it is unselected remove the id from the place
+        e.target.textContent = 'Select Candidate';
+        index = votedArr.indexOf(e.target.value);
+        votedArr.splice(index, 1);
+    }
+    
+    
+    $('#candidate-6').html("Select Candidate");
+    console.log(votedArr);
+});
+
+$('#candidate-6').on('click', function(e){
+    if(e.target.textContent == 'Select Candidate'){
+        e.target.textContent = 'Candidate Selected';
+        if(!votedArr.includes(e.target.value)){//if the array doesn't contain the value when the candidate is selected push it into the array
+            votedArr.push(e.target.value);
+        }
+        
+        //removes the candidate 1 from the array
+        value2 = $('#candidate-5').val();
+        if(votedArr.includes(value2)){
+            index = votedArr.indexOf(value2);
+            votedArr.splice(index, 1);
+        }
+        
+    } else { //if it is unselected remove the id from the place
+        e.target.textContent = 'Select Candidate';
+        index = votedArr.indexOf(e.target.value);
+        votedArr.splice(index, 1);
+    }
+    
+    
+    $('#candidate-5').html("Select Candidate");
+    console.log(votedArr);
+});
+    
+    
+$('#candidate-7').on('click', function(e){
+   if(e.target.textContent == 'Select Candidate'){
+        e.target.textContent = 'Candidate Selected';
+        if(!votedArr.includes(e.target.value)){//if the array doesn't contain the value when the candidate is selected push it into the array
+            votedArr.push(e.target.value);
+        }
+        
+        //removes the candidate 1 from the array
+        value2 = $('#candidate-8').val();
+        if(votedArr.includes(value2)){
+            index = votedArr.indexOf(value2);
+            votedArr.splice(index, 1);
+        }
+        
+    } else { //if it is unselected remove the id from the place
+        e.target.textContent = 'Select Candidate';
+        index = votedArr.indexOf(e.target.value);
+        votedArr.splice(index, 1);
+    }
+    
+    
+    $('#candidate-8').html("Select Candidate");
+    console.log(votedArr);
+});
+
+$('#candidate-8').on('click', function(e){
+   if(e.target.textContent == 'Select Candidate'){
+        e.target.textContent = 'Candidate Selected';
+        if(!votedArr.includes(e.target.value)){//if the array doesn't contain the value when the candidate is selected push it into the array
+            votedArr.push(e.target.value);
+        }
+        
+        //removes the candidate 1 from the array
+        value2 = $('#candidate-7').val();
+        if(votedArr.includes(value2)){
+            index = votedArr.indexOf(value2);
+            votedArr.splice(index, 1);
+        }
+        
+    } else { //if it is unselected remove the id from the place
+        e.target.textContent = 'Select Candidate';
+        index = votedArr.indexOf(e.target.value);
+        votedArr.splice(index, 1);
+    }
+    
+    
+    $('#candidate-7').html("Select Candidate");
+    console.log(votedArr);
+});
+</script>
+
+<script>
+
+    var currentTab = 0; // Current tab is set to be the first tab (0)
+    showTab(currentTab); // Display the current tab
+
+    function showTab(n) {
+      // This function will display the specified tab of the form ...
+      var x = document.getElementsByClassName("tab");
+      x[n].style.display = "block";
+      // ... and fix the Previous/Next buttons:
+      if (n == 0) {
+        document.getElementById("prevBtn").style.display = "none";
+      } else {
+        document.getElementById("prevBtn").style.display = "inline";
+      }
+      if (n == (x.length - 1)) {
+        document.getElementById("nextBtn").innerHTML = "Submit";
+        
+      } else {
+        document.getElementById("nextBtn").innerHTML = "Next";
+      }
+      // ... and run a function that displays the correct step indicator:
+
+    }
+
+    function nextPrev(n) {
+      // This function will figure out which tab to display
+      var x = document.getElementsByClassName("tab");
+      // Exit the function if any field in the current tab is invalid:
+      
+      // Hide the current tab:
+      x[currentTab].style.display = "none";
+      // Increase or decrease the current tab by 1:
+      currentTab = currentTab + n;
+      // if you have reached the end of the form... :
+      if (currentTab >= x.length) {
+        //...the form gets submitted:
+        $("#votedList").val(votedArr);
+        document.getElementById("voted").submit();
+        return false;
+      }
+      // Otherwise, display the correct tab:
+      showTab(currentTab);
+    }
+</script>
+{% endblock scripts %}
