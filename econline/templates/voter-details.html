@@ -1,0 +1,167 @@
+{% extends "admin-election.html" %}
+
+{% block content %}
+
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Voter - {{voter.name}}: {{voter.index_number}}</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+                <a href="{{url_for('admin.election_voters', election_id=election.id)}}" class="btn btn-outline-primary">See All Voters</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- The main sauce for cards -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-md btn-outline-info" data-toggle="modal" data-target="#editVoterModal" id="editButton"><span data-feather="edit"></span> Edit Voter</button>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-md btn-outline-danger" id="deleteButton" data-toggle="modal" data-target="#deleteVoterModal"><span data-feather="trash"></span> Delete Voter</button>
+            </div>
+            <div class="col-md-3">
+            </div>
+        </div>
+        <hr>
+
+        <!-- Candidate Card -->
+        <div class="row mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="card text-center" style="margin: 0 auto; width=100%;">
+                        <div class="row" style="width=100%;">
+                            <div class="col-md-12">
+                                <div class="card-block px-2">
+                                    <h4 class="card-title">{{voter.name}}</h4>
+                                    <hr>
+                                    <p class="card-text">Index Number: {{voter.index_number}}</p>
+                                    <p class="card-text">Campus: {{voter.campus}}</p>
+                                    <p class="card-text">Email: {{voter.email}}</p>
+                                    {% if election.status != "Building" %}
+                                        <p class="card-text">Has voted: No</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<!--Edit Candidate Modal -->
+<div class="modal fade" id="editVoterModal" tabindex="-1" role="dialog" aria-labelledby="createElectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-center" id="editCandidateLabel">Edit Voter</h3>
+                <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                {{voter_form.hidden_tag()}}
+                <div class="form-row">
+                <div class="form-group col-12 col-md-12">
+                    {{ voter_form.name.label(class="form-control-label") }}
+                    {% if voter_form.name.errors %}
+                    {{ voter_form.name(class="form-control form-control-lg is-invalid", value=voter.name) }}
+                    <div class="invalid-feedback">
+                        {% for error in voter_form.name.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ voter_form.name(class="form-control form-control-lg", value=voter.name) }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group col-12 col-md-12">
+                    {{ voter_form.email.label(class="form-control-label") }}
+                    {% if voter_form.email.errors %}
+                    {{ voter_form.email(class="form-control form-control-lg is-invalid", value=voter.email) }}
+                    <div class="invalid-feedback">
+                        {% for error in voter_form.email.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ voter_form.email(class="form-control form-control-lg", value=voter.email) }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group col-12 col-md-12">
+                    {{ voter_form.index_number.label(class="form-control-label") }}
+                    {% if voter_form.index_number.errors %}
+                    {{ voter_form.index_number(class="form-control form-control-lg is-invalid", value=voter.index_number) }}
+                    <div class="invalid-feedback">
+                        {% for error in voter_form.index_number.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ voter_form.index_number(class="form-control form-control-lg", value=voter.index_number) }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group col-12 col-md-12">
+                    {{ voter_form.campus.label(class="form-control-label") }}
+                    {% if voter_form.campus.errors %}
+                    {{ voter_form.campus(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in voter_form.campus.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ voter_form.campus(class="form-control form-control-lg") }}
+                    {% endif %}
+                    
+                    {{voter_form.submit_voter(class="btn btn-outline-primary mt-2")}}
+                </div>
+                </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--Delete Modal -->
+<div class="modal" tabindex="-1" id="deleteVoterModal" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Voter?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{{url_for('admin.delete_voter', election_id=election.id, voter_id=voter.id)}}" method="POST">
+            <button type="submit" class="btn btn-danger">Delete Voter</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+    <script>
+        {% if voter_form.errors %}
+            $(window).on('load', function() {
+                $('#editVoterModal').modal('show');
+            }); 
+        {% endif %}
+    </script>
+{% endblock scripts%}

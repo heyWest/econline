@@ -5,10 +5,11 @@ from econline import bcrypt, db
 import logging
 from econline.models import Admin, Election, Candidate, Voter
 from econline.functions import save_picture, send_mail, generate_confirmation_token
-from econline.forms import LoginForm, NewAdminForm, NewElectionForm, EditElectionNameForm, EditElectionDateForm, AddCandidateForm, ImportVotersForm, EmailForm, MassEmailForm
+from econline.forms import LoginForm, NewAdminForm, NewElectionForm, EditElectionNameForm, EditElectionDateForm, AddCandidateForm, ImportVotersForm, EmailForm, MassEmailForm, VoterForm
 import datetime
 import csv
 import io
+import random
 
 admin = Blueprint('admin', __name__)
 
@@ -65,7 +66,6 @@ def admin_election(election_id):
 @admin.route('/admin/election/settings/<election_id>', methods=['POST', 'GET'])
 def election_settings(election_id):
     election = Election.query.filter_by(id=election_id).first()
-    
     
     edit_name = EditElectionNameForm()
     if edit_name.submit_name.data and edit_name.validate_on_submit():
@@ -133,7 +133,6 @@ def election_delete(election_id):
 def election_candidates(election_id):
     election = Election.query.filter_by(id=election_id).first()
     candidates = Candidate.query.filter_by(election_id=election.id).all()
-    print(candidates)
     
     candidate_form = AddCandidateForm()
     if request.method=="POST" and candidate_form.validate_on_submit():
@@ -206,11 +205,19 @@ def election_ballot(election_id):
 def election_voters(election_id):
     election = Election.query.filter_by(id=election_id).first()
     voters = Voter.query.filter_by(election_id=election.id).all()
-    print(voters)
     # might change voters to obj so I can paginate it
     
+    voter_form = VoterForm()
+    if request.method == "POST" and voter_form.submit_voter.data:
+        new_voter = Voter(name=voter_form.name.data, email=voter_form.email.data, index_number=voter_form.index_number.data, campus=voter_form.campus.data, election_id=election.id)
+        db.session.add(new_voter)
+        db.session.commit()
+        
+        flash('New Voter Added!', 'success')
+        return redirect(url_for('admin.election_voters', election_id=election.id))
+    
     import_voters = ImportVotersForm()
-    if request.method == "POST":
+    if request.method == "POST" and import_voters.submit_voters.data:
         f = request.files['voters']
         stream = io.StringIO(f.stream.read().decode("UTF8"), newline=None)
         csv_input = csv.reader(stream)
@@ -222,7 +229,46 @@ def election_voters(election_id):
         
         return redirect(url_for('admin.election_voters', election_id=election.id))
     
-    return render_template('election-voters.html', title=election.name, election=election, voters=voters, import_voters=import_voters)
+    return render_template('election-voters.html', title=election.name, election=election, voters=voters, import_voters=import_voters, voter_form=voter_form)
+
+
+@login_required
+@admin.route('/admin/election/<election_id>/voter/<voter_id>', methods=['POST', 'GET'])
+def voter_details(election_id, voter_id):
+    election = Election.query.filter_by(id=election_id).first()
+    voter = Voter.query.filter_by(id=voter_id).first()
+    
+    voter_form = VoterForm()
+    if request.method == 'POST':
+        # reset the email and index numbers first
+        voter.email = str(random.randint(0,11000)) + "@defaultbhjcr.com"
+        voter.index_number = random.randint(0,11000)
+        db.session.commit()
+        if voter_form.validate_on_submit():
+            voter.name = voter_form.name.data
+            voter.email = voter_form.email.data
+            voter.index_number = voter_form.index_number.data
+            voter.campus = voter_form.campus.data
+
+            db.session.commit()
+            flash('Voter Details Updated', 'success')
+            return redirect(url_for('admin.voter_details', election_id=election.id, voter_id=voter.id))
+
+    return render_template('voter-details.html', title=election.name, election=election, voter=voter, voter_form=voter_form)
+
+
+@login_required
+@admin.route('/admin/election/voter/delete', methods=['POST'])
+@admin.route('/admin/election/<election_id>/voter/delete/<voter_id>', methods=['POST'])
+def delete_voter(election_id, voter_id):
+    voter = Voter.query.filter_by(id=voter_id).first()
+    if voter:
+        db.session.delete(voter)
+        db.session.commit()
+        flash('Voter Deleted', 'success')
+    else:
+        flash('No Voter detected!', 'danger')
+    return redirect(url_for('admin.election_voters', election_id=election_id))
 
 
 @login_required

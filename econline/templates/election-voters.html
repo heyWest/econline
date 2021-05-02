@@ -22,8 +22,8 @@
                     <p class="lead text-muted">Get started by adding your first voters</p>
                     <p>
                         <!--animate button later -->
-                       {# <a href="#" class="btn btn-outline-info btn-lg my-2" aria-pressed="true" role="button" data-toggle="modal" data-target="#addVoterModal"><i class="fa fa-plus-square"></i> Add Voter</a>
-                        &nbsp;#}
+                       <a href="#" class="btn btn-outline-info btn-lg my-2" aria-pressed="true" role="button" data-toggle="modal" data-target="#addVoterModal"><span data-feather="user-plus"></span> Add Voter</a>
+                        &nbsp;
                         <a href="#" class="btn btn-outline-info btn-lg my-2" aria-pressed="true" role="button" data-toggle="modal" data-target="#importVoterModal"><i class="fa fa-upload"></i> Import Voters</a>
                     </p>
                 </div>
@@ -36,7 +36,7 @@
                 <p class="font-weight-bold">You have a total of: {{voters | length}} Voters!</p>
             </div>
             <div class="col-md-4">
-                <button class="btn btn-md btn-outline-info" id="addVoterButton" style="margin-left: auto;" data-toggle="modal" data-target="#addCandidateModal"><span data-feather="user-plus"></span> Add Voter</button>
+                <button class="btn btn-md btn-outline-info" id="addVoterButton" style="margin-left: auto;" data-toggle="modal" data-target="#addVoterModal"><span data-feather="user-plus"></span> Add Voter</button>
                 <button class="btn btn-md btn-outline-danger" id="deleteVotersButton" data-toggle="modal" data-target="#deleteVotersModal" style="margin-left: auto;" ><span data-feather="trash"></span> Delete Database</button>
             </div>
         </div>
@@ -58,7 +58,7 @@
                             </thead>
                             <tbody>
                                 {% for voter in voters %}
-                                <tr class="clickable-row" data-href="#">
+                                <tr class="clickable-row" data-href="{{url_for('admin.voter_details', election_id=election.id, voter_id=voter.id)}}">
                                     <td>{{voter.name}}</td>
                                     <td>{{voter.email}}</td>
                                     <td>{{voter.index_number}}</td>
@@ -85,6 +85,84 @@
 
     </div>
 </main>
+
+<!-- Add Voter Modal -->
+<div class="modal" tabindex="-1" id="addVoterModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Voter</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="POST" enctype="multipart/form-data">
+                    {{voter_form.hidden_tag()}}
+                    <div class="form-group col-12 col-md-12">
+                        {{ voter_form.name.label(class="form-control-label") }}
+                        {% if voter_form.name.errors %}
+                        {{ voter_form.name(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in voter_form.name.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ voter_form.name(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group col-12 col-md-12">
+                        {{ voter_form.email.label(class="form-control-label") }}
+                        {% if voter_form.email.errors %}
+                        {{ voter_form.email(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in voter_form.email.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ voter_form.email(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group col-12 col-md-12">
+                        {{ voter_form.index_number.label(class="form-control-label") }}
+                        {% if voter_form.index_number.errors %}
+                        {{ voter_form.index_number(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in voter_form.index_number.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ voter_form.index_number(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group col-12 col-md-12">
+                        {{ voter_form.campus.label(class="form-control-label") }}
+                        {% if voter_form.campus.errors %}
+                        {{ voter_form.campus(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in voter_formcampusr.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ voter_form.campus(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    {{voter_form.submit_voter(class="btn btn-outline-primary")}}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!--Import Voters Modal -->
 <div class="modal" tabindex="-1" id="importVoterModal" role="dialog">
@@ -159,6 +237,13 @@
     {% if import_voters.errors %}
         $(window).on('load', function() {
             $('#importVoterModal').modal('show');
+        }); 
+    {% endif %}
+</script>
+<script>
+    {% if voter_form.errors %}
+        $(window).on('load', function() {
+            $('#addVoterModal').modal('show');
         }); 
     {% endif %}
 </script>

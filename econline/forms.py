@@ -1,9 +1,9 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, SubmitField, IntegerField
 from wtforms.fields.html5 import TimeField, DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from econline.models import Admin, Election
+from econline.models import Admin, Election, Voter
 from flask_login import current_user
 from datetime import datetime
 from wtforms.widgets import TextArea
@@ -91,6 +91,24 @@ class AddCandidateForm(FlaskForm):
 class ImportVotersForm(FlaskForm):
     voters = FileField('Import Voters', validators=[DataRequired(), FileAllowed(['csv'])])
     submit_voters = SubmitField('Import')
+    
+
+class VoterForm(FlaskForm):
+    name = StringField('Voter Name', validators=[DataRequired(), Length(min=2, max=100)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    index_number = IntegerField('Index Number', validators=[DataRequired()])
+    campus = SelectField(u'Campus', choices=[('Main', 'Main Campus'), ('City', 'City Campus')])
+    submit_voter = SubmitField('Submit')
+    
+    def validate_index(self, index_numer):
+        voter = Voter.query.filter_by(index_number=index_number.data).first()
+        if voter:
+            raise ValidationError('This Index Number is taken!')
+    
+    def validate_email(self, email):
+        voter = Voter.query.filter_by(email=email.data).first()
+        if voter:
+            raise ValidationError('This Email is used by another voter!')
     
 
 class EmailForm(FlaskForm):
