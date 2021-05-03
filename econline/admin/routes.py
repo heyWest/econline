@@ -31,8 +31,9 @@ def admin_login():
     return render_template('admin-login.html', title="Admin Login", form=form)
 
 
-@login_required
+
 @admin.route('/admin/landing', methods=['POST', 'GET'])
+@login_required
 def admin_landing():
     election_form = NewElectionForm()
     if request.method == "POST" and election_form.validate_on_submit():
@@ -53,18 +54,20 @@ def admin_landing():
     return render_template("admin-landing.html", title="EC Landing", election_form=election_form, election_list=election_list)
 
 
-@login_required
+
 @admin.route('/admin/election', methods=['POST', 'GET'])
 @admin.route('/admin/election/<election_id>', methods=['POST', 'GET'])
+@login_required
 def admin_election(election_id):
     election = Election.query.filter_by(id=election_id).first()
     
     return render_template('admin-election.html', title=election.name, election=election)
 
 
-@login_required
+
 @admin.route('/admin/election/settings', methods=['POST', 'GET'])
 @admin.route('/admin/election/settings/<election_id>', methods=['POST', 'GET'])
+@login_required
 def election_settings(election_id):
     election = Election.query.filter_by(id=election_id).first()
     
@@ -113,9 +116,10 @@ def election_settings(election_id):
     return render_template('election-settings.html', title=election.name, election=election, edit_name=edit_name, edit_date=edit_date, email_form=email_form, mass_form=mass_form)
 
 
-@login_required
+
 @admin.route('/admin/election/delete', methods=['POST'])
 @admin.route('/admin/election/delete/<election_id>', methods=['POST'])
+@login_required
 def election_delete(election_id):
     election = Election.query.filter_by(id=election_id).first()
     if election:
@@ -128,9 +132,10 @@ def election_delete(election_id):
         return redirect(url_for('admin.admin_landing'))
     
 
-@login_required
+
 @admin.route('/admin/election/candidates', methods=['POST', 'GET'])
 @admin.route('/admin/election/candidates/<election_id>', methods=['POST', 'GET'])
+@login_required
 def election_candidates(election_id):
     election = Election.query.filter_by(id=election_id).first()
     candidates = Candidate.query.filter_by(election_id=election.id).all()
@@ -152,8 +157,9 @@ def election_candidates(election_id):
     return render_template('election-candidates.html', title=election.name, election=election, candidates=candidates, candidate_form=candidate_form)
 
 
-@login_required
+
 @admin.route('/admin/election/<election_id>/candidate/<candidate_id>', methods=['POST', 'GET'])
+@login_required
 def candidate_details(election_id, candidate_id):
     election = Election.query.filter_by(id=election_id).first()
     candidate = Candidate.query.filter_by(id=candidate_id).first()
@@ -175,9 +181,10 @@ def candidate_details(election_id, candidate_id):
     return render_template('candidate-details.html', title=election.name, election=election, candidate=candidate, candidate_form=candidate_form)
 
 
-@login_required
+
 @admin.route('/admin/election/candidate/delete', methods=['POST'])
 @admin.route('/admin/election/<election_id>/candidate/delete/<candidate_id>', methods=['POST'])
+@login_required
 def candidate_delete(election_id, candidate_id):
     candidate = Candidate.query.filter_by(id=candidate_id, election_id=election_id).first()
     
@@ -191,25 +198,27 @@ def candidate_delete(election_id, candidate_id):
         return redirect(url_for('admin.election_candidates', election_id=election_id))
     
     
-@login_required
+
 @admin.route('/admin/election/ballot', methods=['POST', 'GET'])
 @admin.route('/admin/election/ballot/<election_id>', methods=['POST', 'GET'])
+@login_required
 def election_ballot(election_id):
     election = Election.query.filter_by(id=election_id).first()
     
     return render_template('election-ballot.html', title=election.name, election=election)
 
 
-@login_required
+
 @admin.route('/admin/election/voters', methods=['POST', 'GET'])
 @admin.route('/admin/election/voters/<election_id>', methods=['POST', 'GET'])
+@login_required
 def election_voters(election_id):
     election = Election.query.filter_by(id=election_id).first()
     voters = Voter.query.filter_by(election_id=election.id).all()
     # might change voters to obj so I can paginate it
     
     voter_form = VoterForm()
-    if request.method == "POST" and voter_form.submit_voter.data:
+    if request.method == "POST" and voter_form.submit_voter.data and voter_form.validate_on_submit():
         new_voter = Voter(name=voter_form.name.data, email=voter_form.email.data, index_number=voter_form.index_number.data, campus=voter_form.campus.data, election_id=election.id)
         db.session.add(new_voter)
         db.session.commit()
@@ -218,7 +227,7 @@ def election_voters(election_id):
         return redirect(url_for('admin.election_voters', election_id=election.id))
     
     import_voters = ImportVotersForm()
-    if request.method == "POST" and import_voters.submit_voters.data:
+    if request.method == "POST" and import_voters.submit_voters.data and import_voters.validate_on_submit():
         f = request.files['voters']
         stream = io.StringIO(f.stream.read().decode("UTF8"), newline=None)
         csv_input = csv.reader(stream)
@@ -241,9 +250,10 @@ def election_voters(election_id):
 
 
 
-@login_required
+
 @admin.route('/admin/election/search/index/', methods=['POST', 'GET'])
 @admin.route('/admin/election/search/index/<election_id>/<voter_index>', methods=['POST', 'GET'])
+@login_required
 def search_voter_index(election_id, voter_index):
     voter = Voter.query.filter_by(election_id=election_id, index_number=voter_index).first()
     voter_array = []
@@ -262,9 +272,10 @@ def search_voter_index(election_id, voter_index):
         return jsonify({'voter': ['No Voter Info']})
 
 
-@login_required
+
 @admin.route('/admin/election/search/name/', methods=['POST', 'GET'])
 @admin.route('/admin/election/search/name/<election_id>/<voter_name>', methods=['POST', 'GET'])
+@login_required
 def search_voter_name(election_id, voter_name):
     voter = Voter.query.filter_by(election_id=election_id, name=voter_name).first()
 
@@ -284,9 +295,10 @@ def search_voter_name(election_id, voter_name):
         return jsonify({'voter': ['No Voter Info']})
     
 
-@login_required
+
 @admin.route('/admin/election/search/email/', methods=['POST', 'GET'])
 @admin.route('/admin/election/search/email/<election_id>/<voter_email>', methods=['POST', 'GET'])
+@login_required
 def search_voter_email(election_id, voter_email):
     voter = Voter.query.filter_by(election_id=election_id, email=voter_email).first()
     voter_array = []
@@ -305,10 +317,11 @@ def search_voter_email(election_id, voter_email):
         return jsonify({'voter': ['No Voter Info']})
         
 
-@login_required
+
 @admin.route('/admin/election/voter/', methods=['POST', 'GET'])
 @admin.route('/admin/election/voter/<election_id>/<voter_id>', methods=['POST', 'GET'])
 @admin.route('/admin/election/<election_id>/voter/<voter_id>', methods=['POST', 'GET'])
+@login_required
 def voter_details(election_id, voter_id):
     election = Election.query.filter_by(id=election_id).first()
     voter = Voter.query.filter_by(id=voter_id).first()
@@ -332,9 +345,10 @@ def voter_details(election_id, voter_id):
     return render_template('voter-details.html', title=election.name, election=election, voter=voter, voter_form=voter_form)
 
 
-@login_required
+
 @admin.route('/admin/election/voter/delete', methods=['POST'])
 @admin.route('/admin/election/<election_id>/voter/delete/<voter_id>', methods=['POST'])
+@login_required
 def delete_voter(election_id, voter_id):
     voter = Voter.query.filter_by(id=voter_id).first()
     if voter:
@@ -346,9 +360,10 @@ def delete_voter(election_id, voter_id):
     return redirect(url_for('admin.election_voters', election_id=election_id))
 
 
-@login_required
+
 @admin.route('/admin/election/voters/delete', methods=['POST'])
 @admin.route('/admin/election/voters/delete/<election_id>', methods=['POST'])
+@login_required
 def delete_voters(election_id):
     voters = Voter.query.filter_by(election_id=election_id).all()
     if voters:
@@ -362,18 +377,20 @@ def delete_voters(election_id):
     return redirect(url_for('admin.election_voters', election_id=election_id))
 
 
-@login_required
+
 @admin.route('/admin/election/analyse', methods=['POST', 'GET'])
 @admin.route('/admin/election/analyse/<election_id>', methods=['POST', 'GET'])
+@login_required
 def election_analyse(election_id):
     election = Election.query.filter_by(id=election_id).first()
     
     return render_template('election-analyse.html', title=election.name, election=election)
 
 
-@login_required
+
 @admin.route('/admin/election/launch', methods=['POST', 'GET'])
 @admin.route('/admin/election/launch/<election_id>', methods=['POST', 'GET'])
+@login_required
 def launch_election(election_id):
     election=Election.query.filter_by(id=election_id).first()
     voters = Voter.query.filter_by(election_id=election_id).all()
@@ -391,8 +408,9 @@ def launch_election(election_id):
     return redirect(url_for('admin.election_settings', election_id=election.id))
 
 
-@login_required
+
 @admin.route('/admin/logout')
+@login_required
 def admin_logout():
     logout_user()
     return redirect(url_for('admin.admin_login'))

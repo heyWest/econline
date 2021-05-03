@@ -100,7 +100,7 @@ class VoterForm(FlaskForm):
     campus = SelectField(u'Campus', choices=[('Main', 'Main Campus'), ('City', 'City Campus')])
     submit_voter = SubmitField('Submit')
     
-    def validate_index(self, index_numer):
+    def validate_index_number(self, index_number):
         voter = Voter.query.filter_by(index_number=index_number.data).first()
         if voter:
             raise ValidationError('This Index Number is taken!')

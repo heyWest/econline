@@ -18,7 +18,9 @@ app.config['SECURITY_PASSWORD_SALT'] = os.environ['SECURITY_PASSWORD_SALT']
 #instances
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
-login_manager.login_view = 'admin.admin_login'
+login_manager.blueprint_login_views = {
+    'admin' : '/admin/login'
+}
 login_manager.login_message_category = 'info'
 bcrypt = Bcrypt(app)
 

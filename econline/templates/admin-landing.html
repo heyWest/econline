@@ -29,7 +29,7 @@
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
+            
             <div class="collapse navbar-collapse" id="navbarsExample07">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item active">
@@ -42,10 +42,22 @@
             </div>
         </div>
     </nav>
-
+    
+    
     {% if election_list | length == 0 %}
     <main role="main">
         <div class="container-full-bg">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  <!-- This function gets a flashed message when redirected to another page -->
+                  {% if messages%}
+                  {% for category, message in messages%}
+                  <!-- the message it flashes is dependent on the category -->
+                  <div class="alert alert-{{ category }}">
+                      <span data-feather="alert-circle"></span>{{ message }}
+                  </div>
+                  {% endfor %}
+                  {% endif %}
+                  {% endwith %}
             <section class="jumbotron jumbotron-fluid text-center">
                 <div class="container">
                     <h1 class="jumbotron-heading">Welcome to your Election Creator!</h1>
