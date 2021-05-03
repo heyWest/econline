@@ -1,15 +1,16 @@
 from flask import Blueprint
-from flask import render_template, url_for, redirect, request, jsonify, make_response, flash
+from flask import render_template, url_for, redirect, request, jsonify, make_response, flash, jsonify
 from flask_login import login_user, current_user, logout_user, login_required
 from econline import bcrypt, db
 import logging
 from econline.models import Admin, Election, Candidate, Voter
 from econline.functions import save_picture, send_mail, generate_confirmation_token
-from econline.forms import LoginForm, NewAdminForm, NewElectionForm, EditElectionNameForm, EditElectionDateForm, AddCandidateForm, ImportVotersForm, EmailForm, MassEmailForm, VoterForm
+from econline.forms import LoginForm, NewAdminForm, NewElectionForm, EditElectionNameForm, EditElectionDateForm, AddCandidateForm, ImportVotersForm, EmailForm, MassEmailForm, VoterForm, IndexSearchForm, NameSearchForm,  EmailSearchForm
 import datetime
 import csv
 import io
 import random
+
 
 admin = Blueprint('admin', __name__)
 
@@ -229,10 +230,84 @@ def election_voters(election_id):
         
         return redirect(url_for('admin.election_voters', election_id=election.id))
     
-    return render_template('election-voters.html', title=election.name, election=election, voters=voters, import_voters=import_voters, voter_form=voter_form)
+    search_name = NameSearchForm()
+    
+    search_index = IndexSearchForm()
+    
+    search_email = EmailSearchForm()
+    
+    
+    return render_template('election-voters.html', title=election.name, election=election, voters=voters, import_voters=import_voters, voter_form=voter_form, search_name=search_name, search_index=search_index, search_email=search_email)
+
 
 
 @login_required
+@admin.route('/admin/election/search/index/', methods=['POST', 'GET'])
+@admin.route('/admin/election/search/index/<election_id>/<voter_index>', methods=['POST', 'GET'])
+def search_voter_index(election_id, voter_index):
+    voter = Voter.query.filter_by(election_id=election_id, index_number=voter_index).first()
+    voter_array = []
+    if voter:
+        voterObj={}
+        voterObj['id'] = voter.id
+        voterObj['name'] = voter.name
+        voterObj['index_number'] = voter.index_number
+        voterObj['email'] = voter.email
+        voterObj['campus'] = voter.campus
+        
+        voter_array.append(voterObj)
+        print(voter_array)
+        return jsonify({'voter': voter_array})
+    else:
+        return jsonify({'voter': ['No Voter Info']})
+
+
+@login_required
+@admin.route('/admin/election/search/name/', methods=['POST', 'GET'])
+@admin.route('/admin/election/search/name/<election_id>/<voter_name>', methods=['POST', 'GET'])
+def search_voter_name(election_id, voter_name):
+    voter = Voter.query.filter_by(election_id=election_id, name=voter_name).first()
+
+    voter_array = []
+    if voter:
+        voterObj={}
+        voterObj['id'] = voter.id
+        voterObj['name'] = voter.name
+        voterObj['index_number'] = voter.index_number
+        voterObj['email'] = voter.email
+        voterObj['campus'] = voter.campus
+        
+        voter_array.append(voterObj)
+        print(voter_array)
+        return jsonify({'voter': voter_array})
+    else:
+        return jsonify({'voter': ['No Voter Info']})
+    
+
+@login_required
+@admin.route('/admin/election/search/email/', methods=['POST', 'GET'])
+@admin.route('/admin/election/search/email/<election_id>/<voter_email>', methods=['POST', 'GET'])
+def search_voter_email(election_id, voter_email):
+    voter = Voter.query.filter_by(election_id=election_id, email=voter_email).first()
+    voter_array = []
+    if voter:
+        voterObj={}
+        voterObj['id'] = voter.id
+        voterObj['name'] = voter.name
+        voterObj['index_number'] = voter.index_number
+        voterObj['email'] = voter.email
+        voterObj['campus'] = voter.campus
+        
+        voter_array.append(voterObj)
+        print(voter_array)
+        return jsonify({'voter': voter_array})
+    else:
+        return jsonify({'voter': ['No Voter Info']})
+        
+
+@login_required
+@admin.route('/admin/election/voter/', methods=['POST', 'GET'])
+@admin.route('/admin/election/voter/<election_id>/<voter_id>', methods=['POST', 'GET'])
 @admin.route('/admin/election/<election_id>/voter/<voter_id>', methods=['POST', 'GET'])
 def voter_details(election_id, voter_id):
     election = Election.query.filter_by(id=election_id).first()

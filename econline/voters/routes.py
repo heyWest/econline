@@ -21,7 +21,9 @@ def voters_landing():
 #        voter = confirm_token(token)
 #        voter = Voter.query.filter_by(email=voter).first()
 #        election = Election.qeury.filter_by(id=voter.election_id).first()
-#        
+#        if election.status != "Ongoing":
+#           flash('This Election is unvavilable!', 'warning')
+#           return redirect(url_for('home'))
 #        
 #        return render_template('voters-landing.html', title=election.name)
 #    except:
@@ -31,6 +33,12 @@ def voters_landing():
 
 @voters.route('/voters/<election_id>/vote/<index_number>', methods=['POST', 'GET'])
 def voters_vote(election_id, index_number):
+    election = Election.qeury.filter_by(id=voter.election_id).first()
+    if election.status != "Ongoing":
+        flash('This Election is unvavilable!', 'warning')
+        return redirect(url_for('home'))
+    
+    
     if request.method == 'POST':
         listing = request.form['votedList']
         candidates = listing.split(',')

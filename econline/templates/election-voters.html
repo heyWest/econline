@@ -31,11 +31,14 @@
         </div>
         {% else %}
         <div class="row">
-            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <button class="btn btn-md btn-outline-info" id="searchVoterButton" style="margin-left: auto;" data-toggle="modal" data-target="#searchVoterModal"><span data-feather="search"></span> Search Voter</button>
+            </div>
             <div class="col-md-4">
                 <p class="font-weight-bold">You have a total of: {{voters | length}} Voters!</p>
             </div>
             <div class="col-md-4">
+                
                 <button class="btn btn-md btn-outline-info" id="addVoterButton" style="margin-left: auto;" data-toggle="modal" data-target="#addVoterModal"><span data-feather="user-plus"></span> Add Voter</button>
                 <button class="btn btn-md btn-outline-danger" id="deleteVotersButton" data-toggle="modal" data-target="#deleteVotersModal" style="margin-left: auto;" ><span data-feather="trash"></span> Delete Database</button>
             </div>
@@ -222,6 +225,145 @@
     </div>
   </div>
 </div>
+
+<!--Delete Modal -->
+<div class="modal" tabindex="-1" id="deleteVotersModal" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Voter Database?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{{url_for('admin.delete_voters', election_id=election.id)}}" method="POST">
+            <button type="submit" class="btn btn-danger">Delete Voters</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Search Modal -->
+<div class="modal fade" tabindex="-1" id="searchVoterModal" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Search Voter</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12 col-md-4">
+            <button id="searchNameButton" class="btn btn-outline-primary">Search by Name</button>
+          </div>
+          <div class="col-12 col-md-4">
+            <button id="searchIndexButton" class="btn btn-outline-info">Search by Index No.</button>
+          </div> 
+          <div class="col-12 col-md-4">
+            <button id="searchEmailButton" class="btn btn-outline-warning">Search by Email</button>
+          </div>
+        </div>
+          
+        <div class="row">
+            <div class="col-12">
+                <form id="searchName" style="display: none;" method="POST" action="">
+                    {{search_name.hidden_tag()}}
+                    <div class="form-group mt-2 col-12 col-md-12">
+                        {{ search_name.name_search.label(class="form-control-label") }}
+                        {% if search_name.name_search.errors %}
+                        {{ search_name.name_search(class="form-control form-control-lg is-invalid", placeholder="Enter Voter Name") }}
+                        <div class="invalid-feedback">
+                            {% for error in search_name_search.name.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ search_name.name_search(class="form-control form-control-lg", placeholder="Enter Voter Name") }}
+                        {% endif %}
+                        
+                        {{search_name.search_name(class="btn btn-primary mt-2")}}
+                    </div>
+                    
+                </form>
+                
+                <form id="searchIndex" style="display: none;" method="POST" action="">
+                    {{search_index.hidden_tag()}}
+                    <div class="form-group mt-2 col-12 col-md-12">
+                        {{ search_index.index_number_search.label(class="form-control-label") }}
+                        {% if search_index.index_number_search.errors %}
+                        {{ search_index.index_number_search(class="form-control form-control-lg is-invalid", placeholder="Enter Voter Index Number") }}
+                        <div class="invalid-feedback">
+                            {% for error in search_index.index_number_search.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ search_index.index_number_search(class="form-control form-control-lg", placeholder="Enter Voter Index Number") }}
+                        {% endif %}
+                        
+                        {{search_index.search_index(class="btn btn-info mt-2")}}
+                    </div>
+                </form>
+                
+                <form id="searchEmail" style="display: none;" method="POST" action="">
+                    {{search_email.hidden_tag()}}
+                    <div class="form-group mt-2 col-12 col-md-12">
+                        {{ search_email.email_search.label(class="form-control-label") }}
+                        {% if search_email.email_search.errors %}
+                        {{ search_email.email_search(class="form-control form-control-lg is-invalid", placeholder="Enter Voter Email") }}
+                        <div class="invalid-feedback">
+                            {% for error in search_email_search.email.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ search_email.email_search(class="form-control form-control-lg", placeholder="Enter Voter Email") }}
+                        {% endif %}
+                        
+                        {{search_email.search_email(class="btn btn-warning mt-2")}}
+                    </div>
+                </form>
+            </div>
+        
+        </div>
+        
+        <div class="row mt-2">
+          <section id="searchResultsTable">
+                <div class="row">
+                    <div class="container" style="margin: 0 auto;">
+                        <table class="table table-bordered table-hover" style="margin: 0 auto;">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Voter Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Index No.</th>
+                                    <th scope="col">Campus</th>
+                                    {% if election.status != "Building" %}
+                                    <th scope="col">Has Voted</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody id="resultsRow">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock content %}
 
 {% block scripts %}
@@ -246,6 +388,118 @@
             $('#addVoterModal').modal('show');
         }); 
     {% endif %}
+</script>
+<script>
+    $("#searchIndexButton").on('click', function(){
+        $("#searchIndex").css("display", "block");
+        $("#searchName").css("display", "none");
+        $("#searchEmail").css("display", "none");
+    });
+    
+    $("#searchNameButton").on('click', function(){
+        $("#searchIndex").css("display", "none");
+        $("#searchName").css("display", "block");
+        $("#searchEmail").css("display", "none");
+    });
+    
+    $("#searchEmailButton").on('click', function(){
+        $("#searchIndex").css("display", "none");
+        $("#searchName").css("display", "none");
+        $("#searchEmail").css("display", "block");
+    });
+</script>
+<script>
+    
+    //script to take care of search by index
+        $("#search_index").click(function (e) {
+            var optionHTML = "";
+            var option = "";
+            var voter_index = document.getElementById('index_number_search').value
+            e.preventDefault();
+            
+            $.ajax({
+                    type: "POST",
+                    url: "{{url_for('admin.search_voter_index')}}" + '{{election.id}}/' + voter_index,
+                    success: 
+                        function (data) {
+                        var voter = data.voter[0];
+                        option += " <td>" + voter.name + "</td> <td>" + voter.email + "</td> <td>" + voter.index_number + "</td> <td>" + voter.campus + "</td>";
+                        url = "{{url_for('admin.voter_details')}}{{election.id}}/" + voter.id + ">";
+
+                        optionHTML += '<tr class="clickable-row" data-href=' + url + '>' + option + '</tr>';
+
+
+                        $("#resultsRow").append(optionHTML);
+                        $("#searchVoterModal").show();
+                        $("#searchIndex").css("display", "block");
+                        $("#searchName").css("display", "none");
+                        $("#searchEmail").css("display", "none");
+                        $(".clickable-row").click(function() {
+                            window.document.location = $(this).data("href");
+                        });
+                }
+            });
+        });
+    
+    $("#search_name").click(function (e) {
+            var optionHTML = "";
+            var option = "";
+            var voter_index = document.getElementById('name_search').value
+            e.preventDefault();
+            
+            $.ajax({
+                    type: "POST",
+                    url: "{{url_for('admin.search_voter_name')}}" + '{{election.id}}/' + voter_index,
+                    success: 
+                        function (data) {
+                        var voter = data.voter[0];
+                        option += " <td>" + voter.name + "</td> <td>" + voter.email + "</td> <td>" + voter.index_number + "</td> <td>" + voter.campus + "</td>";
+                        url = "{{url_for('admin.voter_details')}}{{election.id}}/" + voter.id + ">";
+
+                        optionHTML += '<tr class="clickable-row" data-href=' + url + '>' + option + '</tr>';
+
+
+                        $("#resultsRow").append(optionHTML);
+                        $("#searchVoterModal").show();
+                        $("#searchIndex").css("display", "none");
+                        $("#searchName").css("display", "block");
+                        $("#searchEmail").css("display", "none");
+                        $(".clickable-row").click(function() {
+                            window.document.location = $(this).data("href");
+                        });
+                }
+            });
+        });
+    
+    $("#search_email").click(function (e) {
+            var optionHTML = "";
+            var option = "";
+            var voter_index = document.getElementById('email_search').value
+            e.preventDefault();
+            
+            $.ajax({
+                    type: "POST",
+                    url: "{{url_for('admin.search_voter_email')}}" + '{{election.id}}/' + voter_index,
+                    success: 
+                        function (data) {
+                        var voter = data.voter[0];
+                        option += " <td>" + voter.name + "</td> <td>" + voter.email + "</td> <td>" + voter.index_number + "</td> <td>" + voter.campus + "</td>";
+                        url = "{{url_for('admin.voter_details')}}{{election.id}}/" + voter.id + ">";
+
+                        optionHTML += '<tr class="clickable-row" data-href=' + url + '>' + option + '</tr>';
+
+
+                        $("#resultsRow").append(optionHTML);
+                        $("#searchVoterModal").show();
+                        $("#searchIndex").css("display", "none");
+                        $("#searchName").css("display", "none");
+                        $("#searchEmail").css("display", "block");
+                        $(".clickable-row").click(function() {
+                            window.document.location = $(this).data("href");
+                        });
+                }
+            });
+        });
 </script>
 
 {% endblock scripts %}

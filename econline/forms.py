@@ -122,3 +122,19 @@ class MassEmailForm(FlaskForm):
     subject = StringField('Subject', validators=[DataRequired(), Length(min=2, max=100)])
     message = StringField('Message', widget=TextArea(), validators=[DataRequired()])
     send_mass = SubmitField('Send Email')
+    
+    
+class IndexSearchForm(FlaskForm):
+    index_number_search = IntegerField('Index Number', validators=[DataRequired()])
+    search_index = SubmitField('Search')
+    
+
+class NameSearchForm(FlaskForm):
+    name_search = StringField('Name', validators=[DataRequired()])
+    search_name = SubmitField('Search')
+    
+    
+class EmailSearchForm(FlaskForm):
+    email_search = StringField('Email', validators=[DataRequired(), Email()])
+    search_email = SubmitField('Search')
+    
