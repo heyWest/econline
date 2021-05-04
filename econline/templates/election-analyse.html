@@ -1,0 +1,309 @@
+{% extends "admin-election.html" %}
+
+{% block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Election Analysis</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+                <button class="btn btn-sm btn-outline-secondary" disabled>{{election.status}}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- The main sauce for cards -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <button class="btn btn-md btn-outline-secondary" id="generalButton"><span data-feather="archive"></span> General</button>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-md btn-outline-warning" id="candidateButton"><span data-feather="user"></span> Candidate Analysis</button>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-md btn-outline-info" id="votersButton"><span data-feather="users"></span> Voter Demographics</button>
+            </div>
+        </div>
+        <hr>
+        
+        <section id="generalAnalysis">
+            <div class="row">
+                <div class="col-12 col-md-4">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Number of Voters:</div>
+                        <div class="card-body">
+                            <span data-feather="user"></span> <b>{{total_voters | length}}</b>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Number of Voters Voted:</div>
+                        <div class="card-body">
+                            <span data-feather="user"></span> <b>{{voted_voters | length}}</b>
+                        </div>
+                    </div>
+                </div>
+                {% if total_voters | length == 0 %}
+                <div class="col-12 col-md-4">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Percentage of Voters Voted:</div>
+                        <div class="card-body">
+                            <span data-feather="percent"></span> <b>0</b>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-12 col-md-4">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Percentage of Voters Voted:{{((voted_voters | length) / (total_voters | length)) * 100}}</div>
+                        <div class="card-body">
+                            <span data-feather="percent"></span> <b>0</b>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+        
+         <section id="candidateAnalysis" style="display: none;">
+            {% for portfolio in portfolios %}
+            <center><h3>{{portfolio}}</h3></center>
+             {%if portfolio == "President"%}
+            <div class="row">
+                {% set candidates = candidate.query.filter_by(election_id=election.id, portfolio=portfolio).all() %}
+                {% if candidates | length != 0 %}
+                {% for candidate in candidates %}
+                <div class="col-12 col-md-4">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">{{candidate.name}}</div>
+                        <div class="card-body">
+                            <span data-feather="user"></span>Votes: <b>{{candidate.votes_number}}</b><br>
+                            <span data-feather="percent"></span>Percentage: <b>{{(candidate.votes_number)}}</b>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+             {% endif %}
+             
+             {%if portfolio == "Vice President"%}
+             <center><h5>Main</h5></center>
+            <div class="row">
+                {% set candidates = candidate.query.filter_by(election_id=election.id, portfolio=portfolio, campus='Main').all() %}
+                {% if candidates | length != 0 %}
+                {% for candidate in candidates %}
+                <div class="col-12 col-md-4">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">{{candidate.name}}</div>
+                        <div class="card-body">
+                            <span data-feather="user"></span>Votes: <b>{{candidate.votes_number}}</b>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+             {% endif %}
+
+             
+             {%if portfolio == "Vice President"%}
+             <center><h5>City</h5></center>
+            <div class="row">
+                {% set candidates = candidate.query.filter_by(election_id=election.id, portfolio=portfolio, campus='City').all() %}
+                {% if candidates | length != 0 %}
+                {% for candidate in candidates %}
+                <div class="col-12 col-md-4">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">{{candidate.name}}</div>
+                        <div class="card-body">
+                            <span data-feather="user"></span>Votes: <b>{{candidate.votes_number}}</b>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+             {% endif %}
+
+             
+             {%if portfolio == "Financial Controller"%}
+            <div class="row">
+                {% set candidates = candidate.query.filter_by(election_id=election.id, portfolio=portfolio).all() %}
+                {% if candidates | length != 0 %}
+                {% for candidate in candidates %}
+                <div class="col-12 col-md-4">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">{{candidate.name}}</div>
+                        <div class="card-body">
+                            <span data-feather="user"></span>Votes: <b>{{candidate.votes_number}}</b>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+             {% endif %}
+             
+             {%if portfolio == "Treasurer"%}
+            <div class="row">
+                {% set candidates = candidate.query.filter_by(election_id=election.id, portfolio=portfolio).all() %}
+                {% if candidates | length != 0 %}
+                {% for candidate in candidates %}
+                <div class="col-12 col-md-4">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">{{candidate.name}}</div>
+                        <div class="card-body">
+                            <span data-feather="user"></span>Votes: <b>{{candidate.votes_number}}</b>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+             {% endif %}
+             
+             {%if portfolio == "General Secretary"%}
+            <div class="row">
+                {% set candidates = candidate.query.filter_by(election_id=election.id, portfolio=portfolio).all() %}
+                {% if candidates | length != 0 %}
+                {% for candidate in candidates %}
+                <div class="col-12 col-md-4">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">{{candidate.name}}</div>
+                        <div class="card-body">
+                            <span data-feather="user"></span>Votes: <b>{{candidate.votes_number}}</b>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+             {% endif %}
+             
+             {%if portfolio == "Coordinator"%}
+            <div class="row">
+                {% set candidates = candidate.query.filter_by(election_id=election.id, portfolio=portfolio).all() %}
+                {% if candidates | length != 0 %}
+                {% for candidate in candidates %}
+                <div class="col-12 col-md-4">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">{{candidate.name}}</div>
+                        <div class="card-body">
+                            <span data-feather="user"></span>Votes: <b>{{candidate.votes_number}}</b>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+             {% endif %}
+             
+             <hr>
+            {% endfor %}
+             
+        </section>
+        
+        <section id="voterDemographics" style="display: none;">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Number of Main Campus Voters:</div>
+                        <div class="card-body">
+                            <span data-feather="user"></span> <b>{{main_voters|length}}</b>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Number of City Campus Voters:</div>
+                        <div class="card-body">
+                            <span data-feather="user"></span> <b>{{city_voters|length}}</b>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Percentage of Voters Voted<br>(Main Campus):</div>
+                        <div class="card-body">
+                            {% if main_voters | length == 0 %}
+                            <span data-feather="percent"></span> <b>0</b>
+                            {% else %}
+                            <span data-feather="percent"></span> <b>{{((main_voted | length) /(main_voters | length)) * 100}}</b>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-12 col-md-6">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Percentage of Voters Voted<br>(City Campus):</div>
+                        <div class="card-body">
+                            {% if city_voters | length == 0 %}
+                            <span data-feather="percent"></span> <b>0</b>
+                            {% else %}
+                            <span data-feather="percent"></span> <b>{{((city_voted | length) /(city_voters | length)) * 100}}</b>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-12 col-md-6">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Percentage of Voters<br>(Main Campus):</div>
+                        <div class="card-body">
+                            {% if city_voters | length == 0 %}
+                            <span data-feather="percent"></span> <b>0</b>
+                            {% else %}
+                            <span data-feather="percent"></span> <b>{{((main_voters | length) /(total_voters | length)) * 100}}</b>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-12 col-md-6">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Percentage of Voters<br>(City Campus):</div>
+                        <div class="card-body">
+                            {% if city_voters | length == 0 %}
+                            <span data-feather="percent"></span> <b>0</b>
+                            {% else %}
+                            <span data-feather="percent"></span> <b>{{((city_voters | length) /(total_voters | length)) * 100}}</b>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    $("#generalButton").on('click', function(){
+        $("#generalAnalysis").css('display', 'block');
+        $("#candidateAnalysis").css('display', 'none');
+        $("#voterDemographics").css('display', 'none');
+    });
+    
+    $("#votersButton").on('click', function(){
+        $("#generalAnalysis").css('display', 'none');
+        $("#candidateAnalysis").css('display', 'none');
+        $("#voterDemographics").css('display', 'block');
+    });
+    
+    $("#candidateButton").on('click', function(){
+        $("#generalAnalysis").css('display', 'none');
+        $("#candidateAnalysis").css('display', 'block');
+        $("#voterDemographics").css('display', 'none');
+    });
+</script>
+
+<script>
+    //script to take care of automatic reload of the page
+    $(window).on('load', function(){
+        setInterval(function(){
+            window.location.reload();
+        }, 30000);
+    });
+</script>
+{% endblock scripts %}

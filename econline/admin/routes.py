@@ -4,7 +4,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from econline import bcrypt, db
 import logging
 from econline.models import Admin, Election, Candidate, Voter
-from econline.functions import save_picture, send_mail, generate_confirmation_token
+from econline.functions import save_picture, send_mail, generate_confirmation_token, start_end_election
 from econline.forms import LoginForm, NewAdminForm, NewElectionForm, EditElectionNameForm, EditElectionDateForm, AddCandidateForm, ImportVotersForm, EmailForm, MassEmailForm, VoterForm, IndexSearchForm, NameSearchForm,  EmailSearchForm
 import datetime
 import csv
@@ -38,7 +38,7 @@ def admin_landing():
     election_form = NewElectionForm()
     if request.method == "POST" and election_form.validate_on_submit():
         # converting dates and times to string then joining them
-        start_at = election_form.start_date.data.strftime("%Y-%m-%d")+ " " + election_form.end_time.data.strftime("%H:%M")
+        start_at = election_form.start_date.data.strftime("%Y-%m-%d")+ " " + election_form.start_time.data.strftime("%H:%M")
         end_at = election_form.end_date.data.strftime("%Y-%m-%d") + " " + election_form.end_time.data.strftime("%H:%M")
         
         #chaging str back to datetime and inserting to db
@@ -80,7 +80,7 @@ def election_settings(election_id):
     
     edit_date = EditElectionDateForm()
     if edit_date.submit_date.data and edit_date.validate_on_submit():
-        start_at = edit_date.start_date.data.strftime("%Y-%m-%d")+ " " + edit_date.end_time.data.strftime("%H:%M")
+        start_at = edit_date.start_date.data.strftime("%Y-%m-%d")+ " " + edit_date.start_time.data.strftime("%H:%M")
         end_at = edit_date.end_date.data.strftime("%Y-%m-%d") + " " + edit_date.end_time.data.strftime("%H:%M")
         
         election.start_at = datetime.datetime.strptime(start_at, "%Y-%m-%d %H:%M")
@@ -383,8 +383,22 @@ def delete_voters(election_id):
 @login_required
 def election_analyse(election_id):
     election = Election.query.filter_by(id=election_id).first()
+    candidate = Candidate
     
-    return render_template('election-analyse.html', title=election.name, election=election)
+    total_voters = Voter.query.filter_by(election_id=election.id).all()
+    voted_voters = Voter.query.filter_by(election_id=election.id, has_voted=True).all()
+    
+    portfolios = ['President', 'Vice President', 'Financial Controller', 'Treasurer', 'General Secretary', 'Coordinator']
+    
+    
+    #voter demographics
+    main_voters = Voter.query.filter_by(election_id=election.id, campus='Main').all()
+    city_voters = Voter.query.filter_by(election_id=election.id, campus='City').all()
+    
+    main_voted = Voter.query.filter_by(election_id=election.id, campus='Main', has_voted=True).all()
+    city_voted = Voter.query.filter_by(election_id=election.id, campus='City', has_voted=True).all()
+    
+    return render_template('election-analyse.html', title=election.name, election=election, total_voters=total_voters,voted_voters=voted_voters, portfolios=portfolios, candidate=candidate, main_voters=main_voters, city_voters=city_voters, main_voted=main_voted, city_voted=city_voted)
 
 
 
@@ -394,6 +408,7 @@ def election_analyse(election_id):
 def launch_election(election_id):
     election=Election.query.filter_by(id=election_id).first()
     voters = Voter.query.filter_by(election_id=election_id).all()
+    print(election_id)
     
     election.status = "Ongoing"
     for voter in voters:
@@ -405,7 +420,7 @@ def launch_election(election_id):
     
     db.session.commit()
     flash('The Voting Process has Begun!', 'info')
-    return redirect(url_for('admin.election_settings', election_id=election.id))
+    return redirect(url_for('admin.admin_election', election_id=election.id))
 
 
 

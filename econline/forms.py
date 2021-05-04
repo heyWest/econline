@@ -39,17 +39,13 @@ class NewElectionForm(FlaskForm):
             raise ValidationError('That Election already exists!')
             
     def validate_start_date(self, start_date):
-        if start_date.data < datetime.date(datetime.now()):
-            raise ValidationError('Choose a date in the future')
+        if start_date.data < datetime.date(datetime.now()) or start_date.data > self.end_date.data:
+            raise ValidationError('Check the dates')
     
     def validate_end_date(self, end_date):
         if end_date.data < datetime.date(datetime.now()):
-            raise ValidationError('Choose a date in the future')
+            raise ValidationError('Check the dates')
             
-    def validate_dates(self, start_date, end_date):
-        if start_date.data < end_date.data:
-            raise ValidationError('Please check the dates!')
-
 
 class EditElectionNameForm(FlaskForm):
     name = StringField('Election Name', validators=[DataRequired(), Length(min=2, max=30)])
@@ -69,21 +65,17 @@ class EditElectionDateForm(FlaskForm):
     submit_date = SubmitField('Submit Edit')
     
     def validate_start_date(self, start_date):
-        if start_date.data < datetime.date(datetime.now()):
-            raise ValidationError('Choose a date in the future')
+        if start_date.data < datetime.date(datetime.now()) or start_date.data > self.end_date.data:
+            raise ValidationError('Check the dates')
     
     def validate_end_date(self, end_date):
         if end_date.data < datetime.date(datetime.now()):
-            raise ValidationError('Choose a date in the future')
+            raise ValidationError('Check the dates')
             
-    def validate_dates(self, start_date, end_date):
-        if start_date.data < end_date.data:
-            raise ValidationError('Please check the dates!')
             
-
 class AddCandidateForm(FlaskForm):
     name = StringField('Candidate Name', validators=[DataRequired(), Length(min=2, max=100)])
-    portfolio = SelectField(u'Portfolio', choices=[('President', 'President'), ('Vice President', 'Vice Preisdent'), ('Treasurer', 'Treasurer')])
+    portfolio = SelectField(u'Portfolio', choices=[('President', 'President'), ('Vice President', 'Vice Preisdent'), ('Treasurer', 'Treasurer'), ('Financial Controller', ' Financial Controller'), ('General Secretary', 'General Secretary'), ('Coordinator', 'Coordinator')])
     image_file = FileField('Candidate Picture', validators=[FileAllowed(['jpg', 'png'])])
     campus = SelectField(u'Campus', choices=[('Main', 'Main Campus'), ('City', 'City Campus')])
     

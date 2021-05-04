@@ -202,7 +202,7 @@
                             <div class="form-group col-12 col-md-6">
                                 {{ election_form.end_time.label(class="form-control-label") }}
                                 {% if election_form.end_time.errors %}
-                                {{ election_form.end_date(class="form-control form-control-lg is-invalid") }}
+                                {{ election_form.end_time(class="form-control form-control-lg is-invalid") }}
                                 <div class="invalid-feedback">
                                     {% for error in election_form.end_time.errors %}
                                     <span>{{ error }}</span>

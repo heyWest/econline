@@ -124,7 +124,7 @@
                                                 <div class="form-group col-12 col-md-6">
                                                     {{ edit_date.end_time.label(class="form-control-label") }}
                                                     {% if edit_date.end_time.errors %}
-                                                    {{ edit_date.end_date(class="form-control form-control-lg is-invalid") }}
+                                                    {{ edit_date.end_time(class="form-control form-control-lg is-invalid") }}
                                                     <div class="invalid-feedback">
                                                         {% for error in edit_date.end_time.errors %}
                                                         <span>{{ error }}</span>

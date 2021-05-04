@@ -1,10 +1,31 @@
 import os
+import threading
+import time
 import secrets
 from PIL import Image
 from flask_mail import Message
-from econline import app, mail
+from econline import app, mail,db
+from econline.models import Election
 from itsdangerous import URLSafeTimedSerializer
+import datetime
 
+
+def start_end_election():
+    while True:
+        elections = Election.query.all()
+        for election in elections:
+            if election.start_at < datetime.datetime.now():
+                election.status = "Ongoing"
+                db.session.commit()
+            elif election.end_at < datetime.datetime.now():
+                election.status = "Ended"
+                db.session.commit()
+        time.sleep(2)
+
+#We start a thread instead of using asyncio...
+t=threading.Thread(target=start_end_election)
+t.start()
+    
 
 def save_picture(candidate_name,form_picture):
     random_hex = secrets.token_hex(3)

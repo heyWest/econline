@@ -22,7 +22,12 @@
   <body>
     <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">{{election.name}}</a>
-      <input class="form-control form-control-dark w-100" type="text" placeholder="" aria-label="Search" disabled>
+<!--      <input class="form-control form-control-dark w-100" type="text" placeholder="" aria-label="Search" disabled>-->
+        {% if election.status == "Building" %}
+            <p class="ml-2 mb-auto" style="color: white;">Election Starts In:</p> <div class="form-control form-control-dark w-100" id="clockdiv"></div>
+        {% elif election.status == "Ongoing" %}
+            <p class="ml-2 mb-auto" style="color: white;">Election Ends In:</p> <div class="form-control form-control-dark w-100" id="clockdiv"></div>
+        {% endif %}
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
           <a class="nav-link" href="{{url_for('admin.admin_landing')}}">Back</a>
@@ -41,13 +46,14 @@
                             Overview <span class="sr-only">(current)</span>
                         </a>
                     </li>
-                    {% if election.status == "Building" %}
+                    
                     <li class="nav-item">
                         <a class="nav-link" href="{{url_for('admin.election_settings', election_id = election.id)}}">
                             <span data-feather="settings"></span>
                             Settings
                         </a>
                     </li>
+                    {% if election.status == "Building" %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{url_for('admin.election_candidates', election_id = election.id)}}">
                             <span data-feather="user"></span>
@@ -106,12 +112,6 @@
               <div class="btn-group mr-2">
                 <button class="btn btn-sm btn-outline-secondary" disabled>{{election.status}}</button>
               </div>
-<!--
-              <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                <span data-feather="calendar"></span>
-                This week
-              </button>
--->
             </div>
           </div>
         
@@ -162,8 +162,6 @@
                     </div>
                 </div>
             </div>
-
-          
         </main>
         {% endblock content %}
       </div>
@@ -188,6 +186,46 @@
             $('.alert').fadeOut('fast');
         }, 3000);
 
+    </script>
+    <script>
+        //countdown timer
+        function getTimeRemaining(endtime) {
+            const total = Date.parse(endtime) - Date.parse(new Date());
+            const seconds = Math.floor((total / 1000) % 60);
+            const minutes = Math.floor((total / 1000 / 60) % 60);
+            const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
+            const days = Math.floor(total / (1000 * 60 * 60 * 24));
+
+            return {
+                total,
+                days,
+                hours,
+                minutes,
+                seconds
+            };
+        }
+
+        function initializeClock(id, endtime) {
+            const clock = document.getElementById(id);
+            const timeinterval = setInterval(() => {
+                const t = getTimeRemaining(endtime);
+                clock.innerHTML = 'days: ' + t.days + '&nbsp;' +
+                    'hours: ' + t.hours + '&nbsp;' +
+                    'minutes: ' + t.minutes + '&nbsp;' +
+                    'seconds: ' + t.seconds;
+                if (t.total <= 0) {
+                    clearInterval(timeinterval);
+                    window.location.replace("{{url_for('admin.launch_election', election_id=election.id)}}");
+                }
+            }, 1000);
+        }
+        {% if election.status == "Ongoing" %}
+            const deadline = "{{election.end_at }}";
+        {% elif election. status == "Building" %}
+            const deadline = "{{election.start_at }}";
+        {% endif %}
+        
+        initializeClock('clockdiv', deadline);
     </script>
     
     {% block scripts %}
