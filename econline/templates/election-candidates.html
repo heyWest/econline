@@ -32,7 +32,9 @@
             <div class="col-md-4"></div>
             <div class="col-md-4"></div>
             <div class="col-md-4">
+                {% if election.status == "Building" %}
                 <button class="btn btn-md btn-outline-info" id="addCandidateButton" style="margin: 0 auto;" data-toggle="modal" data-target="#addCandidateModal"><span data-feather="user-plus"></span> Add Candidate</button>
+                {% endif %}
             </div>
         </div>
 
@@ -46,9 +48,6 @@
                                     <th scope="col">Candidate Name</th>
                                     <th scope="col">Portfolio</th>
                                     <th scope="col">Campus</th>
-                                    {% if election_status != "Building" %}
-                                    <th scope="col">No. of Votes</th>
-                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -57,7 +56,6 @@
                                     <td>{{candidate.name}}</td>
                                     <td>{{candidate.portfolio}}</td>
                                     <td>{{candidate.campus}}</td>
-                                    <td>{{candidate.votes_number}}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -108,27 +106,27 @@
                         <div class="form-group col-12 col-md-6">
                             {{ candidate_form.portfolio.label(class="form-control-label") }}
                             {% if candidate_form.portfolio.errors %}
-                            {{candidate_form.portfolio(class="form-control form-control-lg is-invalid") }}
+                            {{candidate_form.portfolio(class="form-control form-control-lg is-invalid", style="font-size: 17px;") }}
                             <div class="invalid-feedback">
                                 {% for error in candidate_form.portfolio.errors %}
                                 <span>{{ error }}</span>
                                 {% endfor %}
                             </div>
                             {% else %}
-                            {{candidate_form.portfolio(class="form-control form-control-lg") }}
+                            {{candidate_form.portfolio(class="form-control form-control-lg", style="font-size: 17px;") }}
                             {% endif %}
                         </div>
                         <div class="form-group col-12 col-md-6">
                             {{ candidate_form.campus.label(class="form-control-label") }}
                             {% if candidate_form.campus.errors %}
-                            {{ candidate_form.campus(class="form-control form-control-lg is-invalid") }}
+                            {{ candidate_form.campus(class="form-control form-control-lg is-invalid", style="font-size: 17px;") }}
                             <div class="invalid-feedback">
                                 {% for error in candidate_form.campus.errors %}
                                 <span>{{ error }}</span>
                                 {% endfor %}
                             </div>
                             {% else %}
-                            {{ candidate_form.campus(class="form-control form-control-lg") }}
+                            {{ candidate_form.campus(class="form-control form-control-lg mb-2", style="font-size: 17px;") }}
                             {% endif %}
                         </div>
                         <div class="form-group col-12 col-md-6">

@@ -40,7 +40,9 @@
             <div class="col-md-4">
                 
                 <button class="btn btn-md btn-outline-info" id="addVoterButton" style="margin-left: auto;" data-toggle="modal" data-target="#addVoterModal"><span data-feather="user-plus"></span> Add Voter</button>
+                {% if election.status == "Building" %}
                 <button class="btn btn-md btn-outline-danger" id="deleteVotersButton" data-toggle="modal" data-target="#deleteVotersModal" style="margin-left: auto;" ><span data-feather="trash"></span> Delete Database</button>
+                {% endif %}
             </div>
         </div>
             <section id="candidatesTable" class="mt-3">
@@ -53,6 +55,7 @@
                                     <th scope="col">Email</th>
                                     <th scope="col">Index No.</th>
                                     <th scope="col">Campus</th>
+                                    <th scope="col">Level</th>
                                     {% if election.status != "Building" %}
                                     <th scope="col">Has Voted</th>
                                     {% endif %}
@@ -65,6 +68,7 @@
                                     <td>{{voter.email}}</td>
                                     <td>{{voter.index_number}}</td>
                                     <td>{{voter.campus}}</td>
+                                    <td>{{voter.level}}</td>
                                     {% if election.status != "Building" %}
                                     <td>{{voter.has_voted}}</td>
                                     {% endif %}
@@ -145,16 +149,31 @@
                     <div class="form-group col-12 col-md-12">
                         {{ voter_form.campus.label(class="form-control-label") }}
                         {% if voter_form.campus.errors %}
-                        {{ voter_form.campus(class="form-control form-control-lg is-invalid") }}
+                        {{ voter_form.campus(class="form-control form-control-lg is-invalid", style="font-size: 17px;") }}
                         <div class="invalid-feedback">
-                            {% for error in voter_formcampusr.errors %}
+                            {% for error in voter_form.campus.errors %}
                             <span>{{ error }}</span>
                             {% endfor %}
                         </div>
                         {% else %}
-                        {{ voter_form.campus(class="form-control form-control-lg") }}
+                        {{ voter_form.campus(class="form-control form-control-lg", style="font-size: 17px;") }}
                         {% endif %}
                     </div>
+                    
+                    <div class="form-group col-12 col-md-12">
+                        {{ voter_form.level.label(class="form-control-label") }}
+                        {% if voter_form.level.errors %}
+                        {{ voter_form.level(class="form-control form-control-lg is-invalid", style="font-size: 17px;") }}
+                        <div class="invalid-feedback">
+                            {% for error in voter_form.level.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ voter_form.level(class="form-control form-control-lg", style="font-size: 17px;") }}
+                        {% endif %}
+                    </div>
+                    
                     {{voter_form.submit_voter(class="btn btn-outline-primary")}}
                 </form>
             </div>

@@ -23,32 +23,14 @@
 
 <body>
     <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Election Name here</a>
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">{{election.name}}</a>
         <input class="form-control form-control-dark w-100" type="text" placeholder="" aria-label="Search" disabled>
         <ul class="navbar-nav px-3">
-            <li class="nav-item text-nowrap">
-                <!--          <a class="nav-link" href="{{url_for('admin.admin_landing')}}">Back</a>-->
-            </li>
         </ul>
     </nav>
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-4"></div>
-            <div class="col-4">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                <!-- This function gets a flashed message when redirected to another page -->
-                {% if messages%}
-                {% for category, message in messages%}
-                <!-- the message it flashes is dependent on the category -->
-                <div class="alert alert-{{ category }}">
-                    <span data-feather="alert-circle"></span>{{ message }}
-                </div>
-                {% endfor %}
-                {% endif %}
-                {% endwith %}
-            </div>
-            <div class="col-4"></div>
             {% block content %}
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
@@ -60,11 +42,22 @@
                     <div class="card border-info text-center mb-3" style="max-width: 30rem; margin: 0 auto;">
                         <div class="card-header">Are these right?</div>
                         <div class="card-body text-info">
-                            <h5 class="card-title">Voter's Name</h5>
-                            <p class="card-text">Voter's Email</p>
-                            <p class="card-text">Voter's Campus</p>
+                            <h5 class="card-title">{{voter.name}}</h5>
+                            <p class="card-text"><b>{{voter.email}}</b></p>
 
-                            <form method="POST" action="{{url_for('voters.voters_landing')}}">
+                            <form method="POST" action="">
+                                <label>Select Your Campus: </label>
+                                <select id="campus" name="campus" class="form-control col-6" style="margin: 0 auto;">
+                                    <option value="Main">Main</option>
+                                    <option value="City">City</option>
+                                </select>
+                                <label>Select Your Level: </label>
+                                <select id="campus" name="level" class="form-control col-6" style="margin: 0 auto;">
+                                    <option value="Main">Level 100</option>
+                                    <option value="City">Level 200</option>
+                                    <option value="City">Level 300</option>
+                                    <option value="City">Level 400</option>
+                                </select>
                                 <div class="form-group">
                                     <label for="index_number">Enter Your Index Number: </label>
                                     <input type="text" class="form-control col-6" id="index_number" name="index_number" style="margin: 0 auto;" placeholder="*******">
@@ -78,10 +71,59 @@
 
 
             </main>
+             <!-- Welcome Modal -->
+                <div class="modal fade" id="welcomeModal" tabindex="-1" role="dialog" aria-labelledby="welcomeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="welcomeModalLabel">Welcome!</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Welcome to the Business House Junior Common Room 2021 Elections.<br>
+                                In order to proceed, you need to verify your details to take part in the election process.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Verify Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
             {% endblock content %}
         </div>
     </div>
-
+  <!-- Flash Messages Modal -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="modal" tabindex="-1" id="flashModal" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Message</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% for category, message in messages%}
+                     <div class="alert alert-{{ category }}">
+                      <center><span data-feather="alert-circle"></span>{{ message }}</center>
+                  </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+    
+   
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
@@ -102,9 +144,19 @@
     <script>
         // letting the flashed messages disappear
         setTimeout(function() {
-            $('.alert').fadeOut('fast');
+            $('#flashModal').hide();
         }, 3000);
-
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            $('#flashModal').show();
+        {% endif %}
+        {% endwith %}
+        
+        
+        $(window).on('load', function() {
+            $("#welcomeModal").modal();
+        });
     </script>
 
     {% block scripts %}

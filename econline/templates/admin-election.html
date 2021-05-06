@@ -53,17 +53,11 @@
                             Settings
                         </a>
                     </li>
-                    {% if election.status == "Building" %}
+                    
                     <li class="nav-item">
                         <a class="nav-link" href="{{url_for('admin.election_candidates', election_id = election.id)}}">
                             <span data-feather="user"></span>
                             Candidates
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{url_for('admin.election_ballot', election_id = election.id)}}">
-                            <span data-feather="archive"></span>
-                            Ballots
                         </a>
                     </li>
                     <li class="nav-item">
@@ -72,10 +66,17 @@
                             Voters
                         </a>
                     </li>
+                    {% if election.status == "Building" %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{url_for('admin.launch_election', election_id=election.id)}}">
                             <span data-feather="zap"></span>
                             Launch Election
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('admin.send_links', election_id=election.id)}}">
+                            <span data-feather="send"></span>
+                            Send Election Links
                         </a>
                     </li>
                     {% else %}
@@ -89,21 +90,6 @@
                 </ul>
             </div>
         </nav>
-              <div class="col-4"></div>
-              <div class="col-4">
-                  {% with messages = get_flashed_messages(with_categories=true) %}
-                  <!-- This function gets a flashed message when redirected to another page -->
-                  {% if messages%}
-                  {% for category, message in messages%}
-                  <!-- the message it flashes is dependent on the category -->
-                  <div class="alert alert-{{ category }}">
-                      <span data-feather="alert-circle"></span>{{ message }}
-                  </div>
-                  {% endfor %}
-                  {% endif %}
-                  {% endwith %}
-              </div>
-              <div class="col-4"></div>
 {% block content %}
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
@@ -140,15 +126,15 @@
                         <div class="card bg-light mb-3" style="max-width: 18rem;">
                             <div class="card-header font-weight-bold">Number of Voters:</div>
                             <div class="card-body">
-                                <span data-feather="user"></span>  <b></b>
+                                <span data-feather="user"></span>  <b>{{all_voters | length}}</b>
                             </div>
                         </div>
                     </div>
                      <div class="col-12 col-md-4">
                         <div class="card bg-light mb-3" style="max-width: 18rem;">
-                            <div class="card-header font-weight-bold">Number of votes casted:</div>
+                            <div class="card-header font-weight-bold">Number of voters voted:</div>
                             <div class="card-body">
-                                <span data-feather="user"></span> <b>{{election.votes_number}}</b>
+                                <span data-feather="user"></span> <b>{{all_voted | length}}</b>
                             </div>
                         </div>
                     </div>
@@ -156,7 +142,11 @@
                         <div class="card bg-light mb-3" style="max-width: 18rem;">
                             <div class="card-header font-weight-bold">Percentage of Voters Voted:</div>
                             <div class="card-body">
-                                <span data-feather="percent"></span> <b></b>
+                                {% if all_voters | length != 0%}
+                                    <span data-feather="percent"></span> <b>{{(all_voted | length / all_voters | length) * 100}}</b>
+                                {% else %}
+                                    <span data-feather="percent"></span> <b>0</b>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -166,7 +156,34 @@
         {% endblock content %}
       </div>
     </div>
-
+      
+      <!-- Flash Messages Modal -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="modal" tabindex="-1" id="flashModal" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Message</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% for category, message in messages%}
+                     <div class="alert alert-{{ category }}">
+                      <center><span data-feather="alert-circle"></span>{{ message }}</center>
+                  </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
@@ -183,9 +200,15 @@
     <script>
         // letting the flashed messages disappear
         setTimeout(function() {
-            $('.alert').fadeOut('fast');
+            $('#flashModal').hide();
         }, 3000);
-
+        
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            $('#flashModal').show();
+        {% endif %}
+        {% endwith %}
     </script>
     <script>
         //countdown timer
@@ -215,7 +238,7 @@
                     'seconds: ' + t.seconds;
                 if (t.total <= 0) {
                     clearInterval(timeinterval);
-                    window.location.replace("{{url_for('admin.launch_election', election_id=election.id)}}");
+//                    window.location.replace("{{url_for('admin.launch_election', election_id=election.id)}}");
                 }
             }, 1000);
         }

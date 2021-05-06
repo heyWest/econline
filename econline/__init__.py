@@ -17,6 +17,9 @@ app.config['SECURITY_PASSWORD_SALT'] = os.environ['SECURITY_PASSWORD_SALT']
 
 #instances
 db = SQLAlchemy(app)
+
+
+
 login_manager = LoginManager(app)
 login_manager.blueprint_login_views = {
     'admin' : '/admin/login'
@@ -30,8 +33,8 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_TL'] = False
 app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = os.environ['ALPHA_MAIL']
-app.config['MAIL_PASSWORD'] = os.environ['ALPHA_MAIL_PASSWORD']
+app.config['MAIL_USERNAME'] = os.environ['BHJCR_MAIL']
+app.config['MAIL_PASSWORD'] = os.environ['BHJCR_MAIL_PASSWORD']
 mail = Mail(app)
 
 

@@ -6,6 +6,13 @@ from datetime import timedelta
 def home():
     return render_template('index.html', title="Welcome")
 
+@app.route('/thank-you')
+def thank_you():
+    return render_template('thank-you.html', title="Thank You!")
+
+@app.route('/error')
+def flash_error():
+    return render_template('flash-error.html', title="Oh No!")
 
 @app.before_request
 def make_session_permanent():

@@ -30,10 +30,13 @@ class Voter(db.Model):
     name = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(200), unique=True, nullable=False)
     index_number = db.Column(db.Integer, unique=True, nullable=False)
+    level = db.Column(db.String(100), nullable=False, default="N/A")
     campus = db.Column(db.String(20), nullable=False)
     election_id = db.Column(db.String(20), db.ForeignKey('election.id'), nullable=False)
     has_voted = db.Column(db.Boolean, nullable=False, default=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
+    tries = db.Column(db.Integer, nullable=False, default=0)
+    
     
 
 class Candidate(db.Model):
@@ -41,6 +44,8 @@ class Candidate(db.Model):
     election_id = db.Column(db.String(20), db.ForeignKey('election.id'), nullable=False)
     name = db.Column(db.String(200), nullable=False)
     portfolio = db.Column(db.String(200), nullable=False)
-    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
+    image_file = db.Column(db.String(200), nullable=False, default='default.jpg')
     campus = db.Column(db.String(20), nullable=False)
     votes_number = db.Column(db.Integer, nullable=False, default=0)
+    yes_votes = db.Column(db.Integer, nullable=False, default=0)
+    no_votes = db.Column(db.Integer, nullable=False, default=0)

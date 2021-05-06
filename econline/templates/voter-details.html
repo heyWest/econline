@@ -16,14 +16,22 @@
     <div class="container">
         <div class="row">
             <div class="col-md-3">
+                <a href="{{url_for('admin.send_link', election_id=voter.election_id, index_number=voter.index_number)}}" class="btn btn-md btn-outline-primary"><span data-feather="send"></span> Send Link</a>
             </div>
             <div class="col-md-3">
+                {% if election.status == "Building" %}
                 <button class="btn btn-md btn-outline-info" data-toggle="modal" data-target="#editVoterModal" id="editButton"><span data-feather="edit"></span> Edit Voter</button>
+                {% endif %}
             </div>
             <div class="col-md-3">
+                {% if election.status == "Building" %}
                 <button class="btn btn-md btn-outline-danger" id="deleteButton" data-toggle="modal" data-target="#deleteVoterModal"><span data-feather="trash"></span> Delete Voter</button>
+                {% endif %}
             </div>
             <div class="col-md-3">
+                {% if election.status == "Ongoing" %}
+                <a href="{{url_for('admin.unblock_voter', election_id=voter.election_id, index_number=voter.index_number)}}" class="btn btn-md btn-outline-primary"><span data-feather="user-check"></span> Unblock Voter</a>
+                {% endif %}
             </div>
         </div>
         <hr>
@@ -41,6 +49,7 @@
                                     <p class="card-text">Index Number: {{voter.index_number}}</p>
                                     <p class="card-text">Campus: {{voter.campus}}</p>
                                     <p class="card-text">Email: {{voter.email}}</p>
+                                    <p class="card-text">Email: {{voter.level}}</p>
                                     {% if election.status != "Building" %}
                                         <p class="card-text">Has voted: No</p>
                                     {% endif %}
@@ -114,14 +123,14 @@
                 <div class="form-group col-12 col-md-12">
                     {{ voter_form.campus.label(class="form-control-label") }}
                     {% if voter_form.campus.errors %}
-                    {{ voter_form.campus(class="form-control form-control-lg is-invalid") }}
+                    {{ voter_form.campus(class="form-control form-control-lg is-invalid", style="font-size: 17px;") }}
                     <div class="invalid-feedback">
                         {% for error in voter_form.campus.errors %}
                         <span>{{ error }}</span>
                         {% endfor %}
                     </div>
                     {% else %}
-                    {{ voter_form.campus(class="form-control form-control-lg") }}
+                    {{ voter_form.campus(class="form-control form-control-lg", style="font-size: 17px;") }}
                     {% endif %}
                     
                     {{voter_form.submit_voter(class="btn btn-outline-primary mt-2")}}

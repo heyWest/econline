@@ -31,7 +31,9 @@
                 <button class="btn btn-md btn-outline-info" id="emailButton"><span data-feather="mail"></span> Email</button>
             </div>
             <div class="col-md-3">
+                {% if election.status == "Building" %}
                 <button class="btn btn-md btn-outline-danger" id="deleteButton" data-toggle="modal" data-target="#deleteModal"><span data-feather="trash"></span> Delete Election</button>
+                {% endif %}
             </div>
         </div>
         <hr>
@@ -60,7 +62,9 @@
                                                     {{ edit_name.name(class="form-control form-control-lg flex-fill", placeholder=election.name) }}
                                                     {% endif %}
                                                 </div>
+                                                {% if election.status == "Building" %}
                                                 &nbsp;{{edit_name.submit_name(class="btn btn-primary")}}
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
@@ -136,7 +140,9 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        {% if election.status == "Building" %}
                                         {{edit_date.submit_date(class="btn btn-primary")}}
+                                        {% endif %}
                                     </div>
                                 </form>
                             </div>

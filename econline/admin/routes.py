@@ -4,7 +4,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from econline import bcrypt, db
 import logging
 from econline.models import Admin, Election, Candidate, Voter
-from econline.functions import save_picture, send_mail, generate_confirmation_token, start_end_election
+from econline.functions import save_picture, send_mail, generate_confirmation_token
 from econline.forms import LoginForm, NewAdminForm, NewElectionForm, EditElectionNameForm, EditElectionDateForm, AddCandidateForm, ImportVotersForm, EmailForm, MassEmailForm, VoterForm, IndexSearchForm, NameSearchForm,  EmailSearchForm
 import datetime
 import csv
@@ -60,8 +60,10 @@ def admin_landing():
 @login_required
 def admin_election(election_id):
     election = Election.query.filter_by(id=election_id).first()
+    all_voters = Voter.query.filter_by(election_id=election.id).all()
+    all_voted = Voter.query.filter_by(election_id=election.id, has_voted=True).all()
     
-    return render_template('admin-election.html', title=election.name, election=election)
+    return render_template('admin-election.html', title=election.name, election=election, all_voters=all_voters, all_voted=all_voted)
 
 
 
@@ -94,7 +96,7 @@ def election_settings(election_id):
     if email_form.send_email.data and email_form.validate_on_submit():
         emails = email_form.recipients.data.split(',')
         html = email_form.message.data
-        subject = mail_form.subject.data
+        subject = email_form.subject.data
         for email in emails:
             send_mail(email, html, subject)
         
@@ -219,7 +221,7 @@ def election_voters(election_id):
     
     voter_form = VoterForm()
     if request.method == "POST" and voter_form.submit_voter.data and voter_form.validate_on_submit():
-        new_voter = Voter(name=voter_form.name.data, email=voter_form.email.data, index_number=voter_form.index_number.data, campus=voter_form.campus.data, election_id=election.id)
+        new_voter = Voter(name=voter_form.name.data, email=voter_form.email.data, index_number=voter_form.index_number.data, campus=voter_form.campus.data, level=voter_form.level.data, election_id=election.id)
         db.session.add(new_voter)
         db.session.commit()
         
@@ -233,7 +235,7 @@ def election_voters(election_id):
         csv_input = csv.reader(stream)
         
         for row in csv_input:
-            voter = Voter(name=row[0], email=row[1], index_number=row[2], campus=row[3], election_id=election.id)
+            voter = Voter(name=row[1], email=row[2], index_number=row[3], campus=row[4], level=row[5], election_id=election.id)
             db.session.add(voter)
             db.session.commit()
         
@@ -249,6 +251,16 @@ def election_voters(election_id):
     return render_template('election-voters.html', title=election.name, election=election, voters=voters, import_voters=import_voters, voter_form=voter_form, search_name=search_name, search_index=search_index, search_email=search_email)
 
 
+
+@admin.route('/admin/election/<election_id>/unblock/<index_number>', methods=['GET', 'POST'])
+@login_required
+def unblock_voter(election_id, index_number):
+    voter = Voter.query.filter_by(index_number=index_number, election_id=election_id).first()
+    voter.tries = 0
+    db.session.commit()
+    
+    flash('Voter has been unblocked!', 'info')
+    return redirect(url_for('admin.election_voters', election_id=election_id))
 
 
 @admin.route('/admin/election/search/index/', methods=['POST', 'GET'])
@@ -388,8 +400,20 @@ def election_analyse(election_id):
     total_voters = Voter.query.filter_by(election_id=election.id).all()
     voted_voters = Voter.query.filter_by(election_id=election.id, has_voted=True).all()
     
-    portfolios = ['President', 'Vice President', 'Financial Controller', 'Treasurer', 'General Secretary', 'Coordinator']
+    portfolios = ['President', 'Vice President', 'Financial Controller', 'Treasurer', 'General Secretary', 'Organizing Secretary', 'Coordinator']
     
+    # total votes for organa and general
+    generals = Candidate.query.filter_by(election_id=election.id, portfolio='General Secretary').all()
+    total_general = 0
+    
+    for general in generals:
+        total_general += general.votes_number
+    
+    organas = Candidate.query.filter_by(election_id=election.id, portfolio='Organizing Secretary').all()
+    total_organa = 0
+    
+    for organa in organas:
+        total_organa += organa.votes_number
     
     #voter demographics
     main_voters = Voter.query.filter_by(election_id=election.id, campus='Main').all()
@@ -398,7 +422,12 @@ def election_analyse(election_id):
     main_voted = Voter.query.filter_by(election_id=election.id, campus='Main', has_voted=True).all()
     city_voted = Voter.query.filter_by(election_id=election.id, campus='City', has_voted=True).all()
     
-    return render_template('election-analyse.html', title=election.name, election=election, total_voters=total_voters,voted_voters=voted_voters, portfolios=portfolios, candidate=candidate, main_voters=main_voters, city_voters=city_voters, main_voted=main_voted, city_voted=city_voted)
+    level_100s = Voter.query.filter_by(election_id=election.id, level='Level 100').all()
+    level_200s = Voter.query.filter_by(election_id=election.id, level='Level 200').all()
+    level_300s = Voter.query.filter_by(election_id=election.id, level='Level 300').all()
+    level_400s = Voter.query.filter_by(election_id=election.id, level='Level 400').all()
+    
+    return render_template('election-analyse.html', title=election.name, election=election, total_voters=total_voters,voted_voters=voted_voters, portfolios=portfolios, candidate=candidate, main_voters=main_voters, city_voters=city_voters, main_voted=main_voted, city_voted=city_voted, total_organa=total_organa, total_general=total_general, level_100s=level_100s, level_200s=level_200s, level_300s=level_300s, level_400s=level_400s)
 
 
 
@@ -407,20 +436,59 @@ def election_analyse(election_id):
 @login_required
 def launch_election(election_id):
     election=Election.query.filter_by(id=election_id).first()
-    voters = Voter.query.filter_by(election_id=election_id).all()
-    print(election_id)
     
-    election.status = "Ongoing"
-    for voter in voters:
+    if election.status == "Building":
+        voters = Voter.query.filter_by(election_id=election_id).all()
+
+        election.status = "Ongoing"
+        db.session.commit()
+        flash('The Voting Process has Begun!', 'info')
+        return redirect(url_for('admin.admin_election', election_id=election.id))
+    
+    if election.status == "Ongoing":
+        flash('The Election is already Ongoing!')
+        return redirect(url_for('admin.admin_election', election_id=election.id))
+    
+    if election.status == "Ended":
+        flash('This Election has ended!')
+        return redirect(url_for('home'))
+    
+
+
+@admin.route('/admin/election/send-links', methods=['POST', 'GET'])
+@admin.route('/admin/election/send-links/<election_id>', methods=['POST', 'GET'])
+def send_links(election_id):
+    election = Election.query.filter_by(id=election_id).first()
+    
+    if election.status != "Ended":
+        voters = Voter.query.filter_by(election_id=election.id).all()
+        for voter in voters:
+            unique_token = generate_confirmation_token(voter.email)
+            voting_url = url_for('voters.voters_landing', token=unique_token, _external=True)
+            html = "This is a notice for the Business House JCR Executives Election 21. Click on this link to vote: " + voting_url
+            subject = "Vote for your BHJCR Executives"
+            send_mail(voter.email, subject, html)
+            
+        flash('The Special links have been sent!', 'info')
+        return redirect(url_for('admin.admin_election', election_id=election.id))
+    
+    
+
+@admin.route('/admin/election/send-link', methods=['POST', 'GET'])
+@admin.route('/admin/election/send-link/<election_id>/<index_number>', methods=['POST', 'GET'])
+def send_link(election_id, index_number):
+    election = Election.query.filter_by(id=election_id).first()
+    
+    if election.status != "Ended":
+        voter = Voter.query.filter_by(election_id=election.id, index_number=index_number).first()
         unique_token = generate_confirmation_token(voter.email)
         voting_url = url_for('voters.voters_landing', token=unique_token, _external=True)
-        html = "Voting has begun. Click on this link to vote: " + voting_url
+        html = "This is a notice for the Business House JCR Executives Election 21. Click on this link to vote: " + voting_url
         subject = "Vote for your BHJCR Executives"
         send_mail(voter.email, subject, html)
-    
-    db.session.commit()
-    flash('The Voting Process has Begun!', 'info')
-    return redirect(url_for('admin.admin_election', election_id=election.id))
+            
+        flash('The Special link has been sent!', 'info')
+        return redirect(url_for('admin.admin_election', election_id=election.id))
 
 
 

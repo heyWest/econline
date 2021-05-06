@@ -56,9 +56,9 @@
                 {% else %}
                 <div class="col-12 col-md-4">
                     <div class="card bg-light mb-3" style="max-width: 18rem;">
-                        <div class="card-header font-weight-bold">Percentage of Voters Voted:{{((voted_voters | length) / (total_voters | length)) * 100}}</div>
+                        <div class="card-header font-weight-bold">Percentage of Voters Voted:</div>
                         <div class="card-body">
-                            <span data-feather="percent"></span> <b>0</b>
+                            <span data-feather="percent"></span> <b>{{((voted_voters | length) / (total_voters | length)) * 100}}</b>
                         </div>
                     </div>
                 </div>
@@ -78,8 +78,10 @@
                     <div class="card bg-light mb-3" style="max-width: 18rem;">
                         <div class="card-header font-weight-bold">{{candidate.name}}</div>
                         <div class="card-body">
-                            <span data-feather="user"></span>Votes: <b>{{candidate.votes_number}}</b><br>
-                            <span data-feather="percent"></span>Percentage: <b>{{(candidate.votes_number)}}</b>
+                            <span data-feather="user-check"></span>&nbsp;Yes Votes: <b>{{candidate.yes_votes}}</b> &nbsp;
+                            <span data-feather="user-x"></span>&nbsp;No Votes: <b>{{(candidate.no_votes)}}</b><br><br>
+                            <span data-feather="percent"></span>Yes Percentage: <b>{{(candidate.yes_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b><br>
+                            <span data-feather="percent"></span>No Percentage: <b>{{(candidate.no_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b>
                         </div>
                     </div>
                 </div>
@@ -98,7 +100,10 @@
                     <div class="card bg-light mb-3" style="max-width: 18rem;">
                         <div class="card-header font-weight-bold">{{candidate.name}}</div>
                         <div class="card-body">
-                            <span data-feather="user"></span>Votes: <b>{{candidate.votes_number}}</b>
+                            <span data-feather="user-check"></span>&nbsp;Yes Votes: <b>{{candidate.yes_votes}}</b> &nbsp;
+                            <span data-feather="user-x"></span>&nbsp;No Votes: <b>{{(candidate.no_votes)}}</b><br><br>
+                            <span data-feather="percent"></span>Yes Percentage: <b>{{(candidate.yes_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b><br>
+                            <span data-feather="percent"></span>No Percentage: <b>{{(candidate.no_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b>
                         </div>
                     </div>
                 </div>
@@ -118,7 +123,10 @@
                     <div class="card bg-light mb-3" style="max-width: 18rem;">
                         <div class="card-header font-weight-bold">{{candidate.name}}</div>
                         <div class="card-body">
-                            <span data-feather="user"></span>Votes: <b>{{candidate.votes_number}}</b>
+                            <span data-feather="user-check"></span>&nbsp;Yes Votes: <b>{{candidate.yes_votes}}</b> &nbsp;
+                            <span data-feather="user-x"></span>&nbsp;No Votes: <b>{{(candidate.no_votes)}}</b><br><br>
+                            <span data-feather="percent"></span>Yes Percentage: <b>{{(candidate.yes_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b><br>
+                            <span data-feather="percent"></span>No Percentage: <b>{{(candidate.no_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b>
                         </div>
                     </div>
                 </div>
@@ -137,7 +145,10 @@
                     <div class="card bg-light mb-3" style="max-width: 18rem;">
                         <div class="card-header font-weight-bold">{{candidate.name}}</div>
                         <div class="card-body">
-                            <span data-feather="user"></span>Votes: <b>{{candidate.votes_number}}</b>
+                            <span data-feather="user-check"></span>&nbsp;Yes Votes: <b>{{candidate.yes_votes}}</b> &nbsp;
+                            <span data-feather="user-x"></span>&nbsp;No Votes: <b>{{(candidate.no_votes)}}</b><br><br>
+                            <span data-feather="percent"></span>Yes Percentage: <b>{{(candidate.yes_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b><br>
+                            <span data-feather="percent"></span>No Percentage: <b>{{(candidate.no_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b>
                         </div>
                     </div>
                 </div>
@@ -155,7 +166,10 @@
                     <div class="card bg-light mb-3" style="max-width: 18rem;">
                         <div class="card-header font-weight-bold">{{candidate.name}}</div>
                         <div class="card-body">
-                            <span data-feather="user"></span>Votes: <b>{{candidate.votes_number}}</b>
+                           <span data-feather="user-check"></span>&nbsp;Yes Votes: <b>{{candidate.yes_votes}}</b> &nbsp;
+                            <span data-feather="user-x"></span>&nbsp;No Votes: <b>{{(candidate.no_votes)}}</b><br><br>
+                            <span data-feather="percent"></span>Yes Percentage: <b>{{(candidate.yes_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b><br>
+                            <span data-feather="percent"></span>No Percentage: <b>{{(candidate.no_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b>
                         </div>
                     </div>
                 </div>
@@ -173,7 +187,35 @@
                     <div class="card bg-light mb-3" style="max-width: 18rem;">
                         <div class="card-header font-weight-bold">{{candidate.name}}</div>
                         <div class="card-body">
-                            <span data-feather="user"></span>Votes: <b>{{candidate.votes_number}}</b>
+                            <span data-feather="user"></span> Votes: <b>{{candidate.votes_number}}</b><br>
+                            {% if total_general != 0 %}
+                            <span data-feather="percent"></span> Votes Percentage: <b>{{(candidate.votes_number/total_organa) * 100}}</b>
+                            {% else %}
+                            <span data-feather="percent"></span> Votes Percentage: <b>0</b>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+             {% endif %}
+             
+             {%if portfolio == "Organizing Secretary"%}
+            <div class="row">
+                {% set candidates = candidate.query.filter_by(election_id=election.id, portfolio=portfolio).all() %}
+                {% if candidates | length != 0 %}
+                {% for candidate in candidates %}
+                <div class="col-12 col-md-4">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">{{candidate.name}}</div>
+                        <div class="card-body">
+                            <span data-feather="user"></span>Votes: <b>{{candidate.votes_number}}</b><br>
+                            {% if total_organa != 0 %}
+                            <span data-feather="percent"></span> Votes Percentage: <b>{{(candidate.votes_number/total_organa) * 100}}</b>
+                            {% else %}
+                            <span data-feather="percent"></span> Votes Percentage: <b>0</b>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -191,7 +233,10 @@
                     <div class="card bg-light mb-3" style="max-width: 18rem;">
                         <div class="card-header font-weight-bold">{{candidate.name}}</div>
                         <div class="card-body">
-                            <span data-feather="user"></span>Votes: <b>{{candidate.votes_number}}</b>
+                            <span data-feather="user-check"></span>&nbsp;Yes Votes: <b>{{candidate.yes_votes}}</b> &nbsp;
+                            <span data-feather="user-x"></span>&nbsp;No Votes: <b>{{(candidate.no_votes)}}</b><br><br>
+                            <span data-feather="percent"></span>Yes Percentage: <b>{{(candidate.yes_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b><br>
+                            <span data-feather="percent"></span>No Percentage: <b>{{(candidate.no_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b>
                         </div>
                     </div>
                 </div>
@@ -272,6 +317,40 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-12 col-md-3">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Number of Level 100s</div>
+                        <div class="card-body">
+                            <span data-feather="percent"></span> <b>{{level_100s | length}}</b>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Number of Level 200s</div>
+                        <div class="card-body">
+                            <span data-feather="percent"></span> <b>{{level_200s | length}}</b>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Number of Level 300s</div>
+                        <div class="card-body">
+                            <span data-feather="percent"></span> <b>{{level_300s | length}}</b>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Number of Level 400s</div>
+                        <div class="card-body">
+                            <span data-feather="percent"></span> <b>{{level_400s | length}}</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
     </div>
 </main>
@@ -303,7 +382,7 @@
     $(window).on('load', function(){
         setInterval(function(){
             window.location.reload();
-        }, 30000);
+        }, 60000);
     });
 </script>
 {% endblock scripts %}

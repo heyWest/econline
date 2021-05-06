@@ -75,7 +75,7 @@ class EditElectionDateForm(FlaskForm):
             
 class AddCandidateForm(FlaskForm):
     name = StringField('Candidate Name', validators=[DataRequired(), Length(min=2, max=100)])
-    portfolio = SelectField(u'Portfolio', choices=[('President', 'President'), ('Vice President', 'Vice Preisdent'), ('Treasurer', 'Treasurer'), ('Financial Controller', ' Financial Controller'), ('General Secretary', 'General Secretary'), ('Coordinator', 'Coordinator')])
+    portfolio = SelectField(u'Portfolio', choices=[('President', 'President'), ('Vice President', 'Vice Preisdent'), ('Treasurer', 'Treasurer'), ('Financial Controller', ' Financial Controller'), ('General Secretary', 'General Secretary'), ('Coordinator', 'Coordinator'), ('Organizing Secretary', 'Organizing Secretary')])
     image_file = FileField('Candidate Picture', validators=[FileAllowed(['jpg', 'png'])])
     campus = SelectField(u'Campus', choices=[('Main', 'Main Campus'), ('City', 'City Campus')])
     
@@ -90,6 +90,7 @@ class VoterForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     index_number = IntegerField('Index Number', validators=[DataRequired()])
     campus = SelectField(u'Campus', choices=[('Main', 'Main Campus'), ('City', 'City Campus')])
+    level = SelectField(u'Level', choices=[('Level 100', 'Level 100'), ('Level 200', 'Level 200'), ('Level 300', 'Level 300'), ('Level 400', 'Level 400')])
     submit_voter = SubmitField('Submit')
     
     def validate_index_number(self, index_number):
