@@ -4,8 +4,10 @@ from datetime import timedelta
 from econline.functions import send_mail
 
 @app.route('/')
+@app.route('/home')
+@app.route('/index')
 def home():
-    return render_template('index.html', title="Welcome")
+    return render_template('home.html', title="Welcome")
 
 @app.route('/thank-you')
 def thank_you():
