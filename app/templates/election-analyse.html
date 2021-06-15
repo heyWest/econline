@@ -25,7 +25,7 @@
             </div>
         </div>
         <hr>
-        
+
         <section id="generalAnalysis">
             <div class="row">
                 <div class="col-12 col-md-4">
@@ -65,11 +65,12 @@
                 {% endif %}
             </div>
         </section>
-        
+
          <section id="candidateAnalysis" style="display: none;">
             {% for portfolio in portfolios %}
             <center><h3>{{portfolio}}</h3></center>
-             {%if portfolio == "President"%}
+
+             {%if portfolio == "President and Vice"%}
             <div class="row">
                 {% set candidates = candidate.query.filter_by(election_id=election.id, portfolio=portfolio).all() %}
                 {% if candidates | length != 0 %}
@@ -80,8 +81,13 @@
                         <div class="card-body">
                             <span data-feather="user-check"></span>&nbsp;Yes Votes: <b>{{candidate.yes_votes}}</b> &nbsp;
                             <span data-feather="user-x"></span>&nbsp;No Votes: <b>{{(candidate.no_votes)}}</b><br><br>
+                            {% if (candidate.yes_votes + candidate.no_votes) != 0 %}
                             <span data-feather="percent"></span>Yes Percentage: <b>{{(candidate.yes_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b><br>
                             <span data-feather="percent"></span>No Percentage: <b>{{(candidate.no_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b>
+                            {% else %}
+                            <span data-feather="percent"></span>Yes Percentage: <b>0</b><br>
+                            <span data-feather="percent"></span>No Percentage: <b>0</b>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -89,7 +95,8 @@
                 {% endif %}
             </div>
              {% endif %}
-             
+
+<!--
              {%if portfolio == "Vice President"%}
              <center><h5>Main</h5></center>
             <div class="row">
@@ -111,8 +118,9 @@
                 {% endif %}
             </div>
              {% endif %}
+-->
 
-             
+
              {%if portfolio == "Vice President"%}
              <center><h5>City</h5></center>
             <div class="row">
@@ -125,8 +133,13 @@
                         <div class="card-body">
                             <span data-feather="user-check"></span>&nbsp;Yes Votes: <b>{{candidate.yes_votes}}</b> &nbsp;
                             <span data-feather="user-x"></span>&nbsp;No Votes: <b>{{(candidate.no_votes)}}</b><br><br>
+                           {% if (candidate.yes_votes + candidate.no_votes) != 0 %}
                             <span data-feather="percent"></span>Yes Percentage: <b>{{(candidate.yes_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b><br>
                             <span data-feather="percent"></span>No Percentage: <b>{{(candidate.no_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b>
+                            {% else %}
+                            <span data-feather="percent"></span>Yes Percentage: <b>0</b><br>
+                            <span data-feather="percent"></span>No Percentage: <b>0</b>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -135,7 +148,7 @@
             </div>
              {% endif %}
 
-             
+
              {%if portfolio == "Financial Controller"%}
             <div class="row">
                 {% set candidates = candidate.query.filter_by(election_id=election.id, portfolio=portfolio).all() %}
@@ -147,8 +160,13 @@
                         <div class="card-body">
                             <span data-feather="user-check"></span>&nbsp;Yes Votes: <b>{{candidate.yes_votes}}</b> &nbsp;
                             <span data-feather="user-x"></span>&nbsp;No Votes: <b>{{(candidate.no_votes)}}</b><br><br>
+                            {% if (candidate.yes_votes + candidate.no_votes) != 0 %}
                             <span data-feather="percent"></span>Yes Percentage: <b>{{(candidate.yes_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b><br>
                             <span data-feather="percent"></span>No Percentage: <b>{{(candidate.no_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b>
+                            {% else %}
+                            <span data-feather="percent"></span>Yes Percentage: <b>0</b><br>
+                            <span data-feather="percent"></span>No Percentage: <b>0</b>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -156,7 +174,7 @@
                 {% endif %}
             </div>
              {% endif %}
-             
+
              {%if portfolio == "Treasurer"%}
             <div class="row">
                 {% set candidates = candidate.query.filter_by(election_id=election.id, portfolio=portfolio).all() %}
@@ -168,8 +186,13 @@
                         <div class="card-body">
                            <span data-feather="user-check"></span>&nbsp;Yes Votes: <b>{{candidate.yes_votes}}</b> &nbsp;
                             <span data-feather="user-x"></span>&nbsp;No Votes: <b>{{(candidate.no_votes)}}</b><br><br>
+                           {% if (candidate.yes_votes + candidate.no_votes) != 0 %}
                             <span data-feather="percent"></span>Yes Percentage: <b>{{(candidate.yes_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b><br>
                             <span data-feather="percent"></span>No Percentage: <b>{{(candidate.no_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b>
+                            {% else %}
+                            <span data-feather="percent"></span>Yes Percentage: <b>0</b><br>
+                            <span data-feather="percent"></span>No Percentage: <b>0</b>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -177,7 +200,7 @@
                 {% endif %}
             </div>
              {% endif %}
-             
+
              {%if portfolio == "General Secretary"%}
             <div class="row">
                 {% set candidates = candidate.query.filter_by(election_id=election.id, portfolio=portfolio).all() %}
@@ -200,7 +223,7 @@
                 {% endif %}
             </div>
              {% endif %}
-             
+
              {%if portfolio == "Organizing Secretary"%}
             <div class="row">
                 {% set candidates = candidate.query.filter_by(election_id=election.id, portfolio=portfolio).all() %}
@@ -223,7 +246,7 @@
                 {% endif %}
             </div>
              {% endif %}
-             
+
              {%if portfolio == "Coordinator"%}
             <div class="row">
                 {% set candidates = candidate.query.filter_by(election_id=election.id, portfolio=portfolio).all() %}
@@ -235,8 +258,13 @@
                         <div class="card-body">
                             <span data-feather="user-check"></span>&nbsp;Yes Votes: <b>{{candidate.yes_votes}}</b> &nbsp;
                             <span data-feather="user-x"></span>&nbsp;No Votes: <b>{{(candidate.no_votes)}}</b><br><br>
+                           {% if (candidate.yes_votes + candidate.no_votes) != 0 %}
                             <span data-feather="percent"></span>Yes Percentage: <b>{{(candidate.yes_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b><br>
                             <span data-feather="percent"></span>No Percentage: <b>{{(candidate.no_votes / (candidate.yes_votes + candidate.no_votes)) * 100}}</b>
+                            {% else %}
+                            <span data-feather="percent"></span>Yes Percentage: <b>0</b><br>
+                            <span data-feather="percent"></span>No Percentage: <b>0</b>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -244,12 +272,12 @@
                 {% endif %}
             </div>
              {% endif %}
-             
+
              <hr>
             {% endfor %}
-             
+
         </section>
-        
+
         <section id="voterDemographics" style="display: none;">
             <div class="row">
                 <div class="col-12 col-md-6">
@@ -268,6 +296,32 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Number of Voters Voted<br>(Main Campus):</div>
+                        <div class="card-body">
+                            {% if main_voters | length == 0 %}
+                            <span data-feather="user"></span> <b>0</b>
+                            {% else %}
+                            <span data-feather="user"></span> <b>{{ main_voted | length }}</b>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-12 col-md-6">
+                    <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header font-weight-bold">Number of Voters Voted<br>(City Campus):</div>
+                        <div class="card-body">
+                            {% if city_voters | length == 0 %}
+                            <span data-feather="user"></span> <b>0</b>
+                            {% else %}
+                            <span data-feather="user"></span> <b>{{city_voted | length}}</b>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-12 col-md-6">
                     <div class="card bg-light mb-3" style="max-width: 18rem;">
                         <div class="card-header font-weight-bold">Percentage of Voters Voted<br>(Main Campus):</div>
@@ -317,40 +371,40 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-12 col-md-3">
-                    <div class="card bg-light mb-3" style="max-width: 18rem;">
-                        <div class="card-header font-weight-bold">Number of Level 100s</div>
-                        <div class="card-body">
-                            <span data-feather="percent"></span> <b>{{level_100s | length}}</b>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-3">
-                    <div class="card bg-light mb-3" style="max-width: 18rem;">
-                        <div class="card-header font-weight-bold">Number of Level 200s</div>
-                        <div class="card-body">
-                            <span data-feather="percent"></span> <b>{{level_200s | length}}</b>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-3">
-                    <div class="card bg-light mb-3" style="max-width: 18rem;">
-                        <div class="card-header font-weight-bold">Number of Level 300s</div>
-                        <div class="card-body">
-                            <span data-feather="percent"></span> <b>{{level_300s | length}}</b>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-3">
-                    <div class="card bg-light mb-3" style="max-width: 18rem;">
-                        <div class="card-header font-weight-bold">Number of Level 400s</div>
-                        <div class="card-body">
-                            <span data-feather="percent"></span> <b>{{level_400s | length}}</b>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!--<div class="row">-->
+            <!--    <div class="col-12 col-md-3">-->
+            <!--        <div class="card bg-light mb-3" style="max-width: 18rem;">-->
+            <!--            <div class="card-header font-weight-bold">Number of Level 100s</div>-->
+            <!--            <div class="card-body">-->
+            <!--                <span data-feather="percent"></span> <b>{{level_100s | length}}</b>-->
+            <!--            </div>-->
+            <!--        </div>-->
+            <!--    </div>-->
+            <!--    <div class="col-12 col-md-3">-->
+            <!--        <div class="card bg-light mb-3" style="max-width: 18rem;">-->
+            <!--            <div class="card-header font-weight-bold">Number of Level 200s</div>-->
+            <!--            <div class="card-body">-->
+            <!--                <span data-feather="percent"></span> <b>{{level_200s | length}}</b>-->
+            <!--            </div>-->
+            <!--        </div>-->
+            <!--    </div>-->
+            <!--    <div class="col-12 col-md-3">-->
+            <!--        <div class="card bg-light mb-3" style="max-width: 18rem;">-->
+            <!--            <div class="card-header font-weight-bold">Number of Level 300s</div>-->
+            <!--            <div class="card-body">-->
+            <!--                <span data-feather="percent"></span> <b>{{level_300s | length}}</b>-->
+            <!--            </div>-->
+            <!--        </div>-->
+            <!--    </div>-->
+            <!--    <div class="col-12 col-md-3">-->
+            <!--        <div class="card bg-light mb-3" style="max-width: 18rem;">-->
+            <!--            <div class="card-header font-weight-bold">Number of Level 400s</div>-->
+            <!--            <div class="card-body">-->
+            <!--                <span data-feather="percent"></span> <b>{{level_400s | length}}</b>-->
+            <!--            </div>-->
+            <!--        </div>-->
+            <!--    </div>-->
+            <!--</div>-->
         </section>
     </div>
 </main>
@@ -363,13 +417,13 @@
         $("#candidateAnalysis").css('display', 'none');
         $("#voterDemographics").css('display', 'none');
     });
-    
+
     $("#votersButton").on('click', function(){
         $("#generalAnalysis").css('display', 'none');
         $("#candidateAnalysis").css('display', 'none');
         $("#voterDemographics").css('display', 'block');
     });
-    
+
     $("#candidateButton").on('click', function(){
         $("#generalAnalysis").css('display', 'none');
         $("#candidateAnalysis").css('display', 'block');
@@ -379,10 +433,10 @@
 
 <script>
     //script to take care of automatic reload of the page
-    $(window).on('load', function(){
-        setInterval(function(){
-            window.location.reload();
-        }, 60000);
-    });
+    // $(window).on('load', function(){
+    //     setInterval(function(){
+    //         window.location.reload();
+    //     }, 60000);
+    // });
 </script>
 {% endblock scripts %}

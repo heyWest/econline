@@ -4,27 +4,24 @@ import time
 import secrets
 from PIL import Image
 from flask_mail import Message
-from econline import app, mail,db
-from econline.models import Election
+from app.extensions import mail,db
+from app.models import Election
 from itsdangerous import URLSafeTimedSerializer
 import datetime
+from app.decorators import async_call
+from flask import current_app as app
 
 
+@async_call
 def start_end_election():
-    while True:
-        elections = Election.query.all()
-        for election in elections:
-            if election.start_at < datetime.datetime.now() and election.status == "Building":
-                election.status = "Ongoing"
-                db.session.commit()
-            elif election.end_at < datetime.datetime.now():
-                election.status = "Ended"
-                db.session.commit()
-        time.sleep(2)
-
-#We start a thread instead of using asyncio...
-t=threading.Thread(target=start_end_election)
-t.start()
+    elections = Election.query.all()
+    for election in elections:
+        if election.start_at < datetime.datetime.now() and election.status == "Building":
+            election.status = "Ongoing"
+            db.session.commit()
+        elif election.end_at < datetime.datetime.now():
+            election.status = "Ended"
+            db.session.commit()
     
 
 def save_picture(candidate_name,form_picture):
@@ -42,6 +39,12 @@ def save_picture(candidate_name,form_picture):
     return picture_fn
 
 
+@async_call
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
+        
+
 def send_mail(to, subject, template):  # remember the send email at the registration route? Yeah ein this. Read on flask mails chale you'll be fine
     msg = Message(
         subject,
@@ -49,7 +52,7 @@ def send_mail(to, subject, template):  # remember the send email at the registra
         html=template,
         sender=('Business House Junior Common Room Elections 21', 'noreply@sender.com')
     )
-    mail.send(msg)
+    send_async_email(app, msg)
     
 
 def generate_confirmation_token(email):

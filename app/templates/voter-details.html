@@ -49,7 +49,7 @@
                                     <p class="card-text">Index Number: {{voter.index_number}}</p>
                                     <p class="card-text">Campus: {{voter.campus}}</p>
                                     <p class="card-text">Email: {{voter.email}}</p>
-                                    <p class="card-text">Email: {{voter.level}}</p>
+                                    <p class="card-text">Level: {{voter.level}}</p>
                                     {% if election.status != "Building" %}
                                         <p class="card-text">Has voted: No</p>
                                     {% endif %}
@@ -133,7 +133,7 @@
                     {{ voter_form.campus(class="form-control form-control-lg", style="font-size: 17px;") }}
                     {% endif %}
                     
-                    {{voter_form.submit_voter(class="btn btn-outline-primary mt-2")}}
+                    {{voter_form.edit_voter(class="btn btn-outline-primary mt-2")}}
                 </div>
                 </div>
                 </div>

@@ -14,7 +14,7 @@
 
     <!-- The main sauce for cards -->
     <div class="container">
-        {% if voters | length == 0 %}
+        {% if voters.items | length == 0 %}
         <div class="row mt-5">
             <section class="jumbotron text-center bg-white" style="margin: 0 auto;">
                 <div class="container-fluid">
@@ -35,7 +35,7 @@
                 <button class="btn btn-md btn-outline-info" id="searchVoterButton" style="margin-left: auto;" data-toggle="modal" data-target="#searchVoterModal"><span data-feather="search"></span> Search Voter</button>
             </div>
             <div class="col-md-4">
-                <p class="font-weight-bold">You have a total of: {{voters | length}} Voters!</p>
+                <p class="font-weight-bold">You have a total of: {{voters.items | length}} Voters!</p>
             </div>
             <div class="col-md-4">
                 
@@ -62,7 +62,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for voter in voters %}
+                                {% for voter in voters.items %}
                                 <tr class="clickable-row" data-href="{{url_for('admin.voter_details', election_id=election.id, voter_id=voter.id)}}">
                                     <td>{{voter.name}}</td>
                                     <td>{{voter.email}}</td>
@@ -78,14 +78,27 @@
                             <tfoot>
                                 <tr class="table-info table-bordered">
                                     <td>Total Numer of Voters:</td>
-                                    <td>{{voters | length}}</td>
+                                    <td>{{voters.items | length}}</td>
                                 </tr>
                             </tfoot>
                         </table>
-
                     </div>
                 </div>
             </section>
+            <br><br>
+        {% for page_num in voters.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+          {% if page_num %}
+            {% if voters.page == page_num %}
+              <a class="btn btn-info mb-4" href="{{ url_for('admin.election_voters', election_id=election.id, page=page_num)}}">{{ page_num }}</a>
+            {% else %}
+              <a class="btn btn-outline-info mb-4" href="{{ url_for('admin.election_voters', election_id=election.id, page=page_num)}}">{{ page_num }}</a>
+            {% endif %}
+          {% else %}
+            ...
+          {% endif %}
+        {% endfor %}
+        
+       
         {% endif %}
 
     </div>

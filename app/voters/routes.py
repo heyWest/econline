@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, url_for, flash, request, redirect
-from econline.functions import confirm_token
-from econline.models import Admin, Election, Candidate, Voter
-from econline import db
+from app.functions import confirm_token
+from app.models import Admin, Election, Candidate, Voter
+from app.extensions import db
 
 voters = Blueprint('voters', __name__)
 

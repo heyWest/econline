@@ -1,11 +1,11 @@
 from flask import Blueprint
 from flask import render_template, url_for, redirect, request, jsonify, make_response, flash, jsonify
 from flask_login import login_user, current_user, logout_user, login_required
-from econline import bcrypt, db
+from app.extensions import bcrypt, db
 import logging
-from econline.models import Admin, Election, Candidate, Voter
-from econline.functions import save_picture, send_mail, generate_confirmation_token
-from econline.forms import LoginForm, NewAdminForm, NewElectionForm, EditElectionNameForm, EditElectionDateForm, AddCandidateForm, ImportVotersForm, EmailForm, MassEmailForm, VoterForm, IndexSearchForm, NameSearchForm,  EmailSearchForm
+from app.models import Admin, Election, Candidate, Voter
+from app.functions import save_picture, send_mail, generate_confirmation_token
+from app.forms import LoginForm, NewAdminForm, NewElectionForm, EditElectionNameForm, EditElectionDateForm, AddCandidateForm, ImportVotersForm, EmailForm, MassEmailForm, VoterForm, IndexSearchForm, NameSearchForm,  EmailSearchForm, EditVoterForm
 import datetime
 import csv
 import io
@@ -211,12 +211,14 @@ def election_ballot(election_id):
 
 
 
-@admin.route('/admin/election/voters', methods=['POST', 'GET'])
-@admin.route('/admin/election/voters/<election_id>', methods=['POST', 'GET'])
+@admin.route('/admin/election/voters', methods=['POST', 'GET'],  defaults={'page':1})
+@admin.route('/admin/election/voters/<election_id>', methods=['POST', 'GET'],  defaults={'page':1})
+@admin.route('/admin/election/voters/<election_id>/<page>', methods=['POST', 'GET'])
 @login_required
-def election_voters(election_id):
+def election_voters(election_id, page):
+    per_page = 50
     election = Election.query.filter_by(id=election_id).first()
-    voters = Voter.query.filter_by(election_id=election.id).all()
+    voters = Voter.query.filter_by(election_id=election.id).paginate(page=page, per_page=per_page)
     # might change voters to obj so I can paginate it
     
     voter_form = VoterForm()
@@ -248,7 +250,7 @@ def election_voters(election_id):
     search_email = EmailSearchForm()
     
     
-    return render_template('election-voters.html', title=election.name, election=election, voters=voters, import_voters=import_voters, voter_form=voter_form, search_name=search_name, search_index=search_index, search_email=search_email)
+    return render_template('election-voters.html', title=election.name, election=election, voters=voters, import_voters=import_voters, voter_form=voter_form, search_name=search_name, search_index=search_index, search_email=search_email, page=page)
 
 
 
@@ -338,21 +340,16 @@ def voter_details(election_id, voter_id):
     election = Election.query.filter_by(id=election_id).first()
     voter = Voter.query.filter_by(id=voter_id).first()
     
-    voter_form = VoterForm()
-    if request.method == 'POST':
-        # reset the email and index numbers first
-        voter.email = str(random.randint(0,11000)) + "@defaultbhjcr.com"
-        voter.index_number = random.randint(0,11000)
-        db.session.commit()
-        if voter_form.validate_on_submit():
-            voter.name = voter_form.name.data
-            voter.email = voter_form.email.data
-            voter.index_number = voter_form.index_number.data
-            voter.campus = voter_form.campus.data
+    voter_form = EditVoterForm()
+    if voter_form.validate_on_submit():
+        voter.name = voter_form.name.data
+        voter.email = voter_form.email.data
+        voter.index_number = voter_form.index_number.data
+        voter.campus = voter_form.campus.data
 
-            db.session.commit()
-            flash('Voter Details Updated', 'success')
-            return redirect(url_for('admin.voter_details', election_id=election.id, voter_id=voter.id))
+        db.session.commit()
+        flash('Voter Details Updated', 'success')
+        return redirect(url_for('admin.voter_details', election_id=election.id, voter_id=voter.id))
 
     return render_template('voter-details.html', title=election.name, election=election, voter=voter, voter_form=voter_form)
 
@@ -472,6 +469,10 @@ def send_links(election_id):
         flash('The Special links have been sent!', 'info')
         return redirect(url_for('admin.admin_election', election_id=election.id))
     
+    else:
+        flash('Election has ended!', 'info')
+        return redirect(url_for('admin.admin_election', election_id=election.id))
+    
     
 
 @admin.route('/admin/election/send-link', methods=['POST', 'GET'])
@@ -488,6 +489,10 @@ def send_link(election_id, index_number):
         send_mail(voter.email, subject, html)
             
         flash('The Special link has been sent!', 'info')
+        return redirect(url_for('admin.admin_election', election_id=election.id))
+    
+    else:
+        flash('Election has ended!', 'info')
         return redirect(url_for('admin.admin_election', election_id=election.id))
 
 
@@ -525,7 +530,10 @@ def create_admin():
 
 @admin.route("/admin/<int:admin_id>/delete", methods=['POST','DELETE'])
 def delete_admin(admin_id):
-    if request.authorization and (request.authorization.username == "admin" and request.authorization.password == "4xxvmt71dpwma3"):
+    admin_username = os.environ['ADMIN_USERNAME']
+    admin_password = os.environ['ADMIN_PASSWORD']
+    
+    if request.authorization and (request.authorization.username == admin_username and request.authorization.password == admin_password):
         admin = Admin.query.filter_by(id=admin_id).first()
         if admin:
             db.session.delete(admin)

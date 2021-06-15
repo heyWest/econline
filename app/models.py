@@ -1,5 +1,5 @@
 from datetime import datetime
-from econline import db, login_manager, app
+from app.extensions import db, login_manager
 from flask_login import UserMixin
 import uuid
 
