@@ -36,6 +36,11 @@ Install libraries
 
 `pip install -r requirements.txt`
 
+Create Database
+` CREATE DATABASE bbs; `
+
+Add/Edit Environment Variables
+
 Make and update migrations
 
 `python run.py db migrate`
@@ -71,11 +76,11 @@ Give credit here.
 
 
 ## Contact
-Created by [@averagewifisuer]
-Twitter: @joe_a_jnr
-Email: jjnracheampong@gmail.com
+- Created by [@averagewifisuer]
+- Twitter: @joe_a_jnr
+- Email: jjnracheampong@gmail.com
 
-- feel free to contact me!
+Feel free to contact me!
 
 
 <!-- Optional -->
