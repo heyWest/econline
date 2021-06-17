@@ -98,7 +98,7 @@ def election_settings(election_id):
         html = email_form.message.data
         subject = email_form.subject.data
         for email in emails:
-            send_mail(email, html, subject)
+            send_mail(email, subject, html)
         
         flash('Email Sent', 'success')
         return redirect(url_for('admin.election_settings', election_id=election.id))
@@ -108,8 +108,9 @@ def election_settings(election_id):
         voters = Voter.qeury.filter_by(election_id=election.id).all()
         html = mass_form.message.data
         subject = mass_form.subject.data
-        for voter in voters:
-            send_mail(voter.email, html, subject)
+        map(send_mail(voters.email,subject,html), voters)
+#        for voter in voters:
+#            send_mail(voter.email, subject, html)
         
         flash('Email Sent', 'success')
         return redirect(url_for('admin.election_settings', election_id=election.id))

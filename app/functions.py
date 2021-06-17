@@ -9,7 +9,9 @@ from app.models import Election
 from itsdangerous import URLSafeTimedSerializer
 import datetime
 from app.decorators import async_call
-from flask import current_app as app
+from flask import current_app
+
+
 
 
 @async_call
@@ -45,12 +47,13 @@ def send_async_email(app, msg):
         mail.send(msg)
         
 
-def send_mail(to, subject, template):  # remember the send email at the registration route? Yeah ein this. Read on flask mails chale you'll be fine
+def send_mail(to, subject, template):
+    app = current_app._get_current_object()
     msg = Message(
         subject,
         recipients=[to],
         html=template,
-        sender=('Business House Junior Common Room Elections 21', 'noreply@sender.com')
+        sender=('Business House Junior Common Room', 'noreply@sender.com')
     )
     send_async_email(app, msg)
     
