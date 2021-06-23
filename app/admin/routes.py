@@ -10,6 +10,7 @@ import datetime
 import csv
 import io
 import random
+import os
 
 
 admin = Blueprint('admin', __name__)
@@ -507,7 +508,11 @@ def admin_logout():
 
 @admin.route("/create", methods=['GET', 'POST'])
 def create_admin():
-    if request.authorization and (request.authorization.username == "admin" and request.authorization.password == "4xxvmt71dpwma3"):
+    admin_username = os.getenv('ADMIN_USERNAME')
+    admin_password = os.getenv('ADMIN_PASSWORD')
+    
+    
+    if request.authorization and (request.authorization.username == admin_username and request.authorization.password == admin_password):
         admin_list = Admin.query.all()
         form = NewAdminForm()
         if request.method == 'POST':
@@ -531,8 +536,10 @@ def create_admin():
 
 @admin.route("/admin/<int:admin_id>/delete", methods=['POST','DELETE'])
 def delete_admin(admin_id):
-    admin_username = os.environ['ADMIN_USERNAME']
-    admin_password = os.environ['ADMIN_PASSWORD']
+    admin_username = os.getenv('ADMIN_USERNAME')
+    admin_password = os.getenv('ADMIN_PASSWORD')
+    
+    print(admin_username)
     
     if request.authorization and (request.authorization.username == admin_username and request.authorization.password == admin_password):
         admin = Admin.query.filter_by(id=admin_id).first()

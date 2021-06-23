@@ -14,4 +14,5 @@ manager.add_command('shell', Shell(make_context=_make_context))
 
 if __name__=="__main__":
     manager.run()
+    db.create_all()
     
