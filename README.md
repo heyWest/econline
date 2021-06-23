@@ -36,15 +36,25 @@ Install libraries
 
 `pip install -r requirements.txt`
 
-Create Database
-` CREATE DATABASE bbs; `
+Initialize Database
+` python run.py shell  `
+
+` db.create_all() `
+
+` exit() `
+
+
 
 Add/Edit Environment Variables
 
 Make and update migrations
 
-`python run.py db migrate`
-`python run.py db upgrade `
+` python run.py db stamp 7d52952abb12`
+
+` python run.py db migrate `
+
+` python run.py db upgrade `
+
 
 
 ## Usage
