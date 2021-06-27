@@ -102,8 +102,8 @@ def election_settings(election_id):
         emails = email_form.recipients.data.split(',')
         html = email_form.message.data
         subject = email_form.subject.data
-        for email in emails:
-            send_mail(email, subject, html)
+
+        map(lambda email: send_mail(email, subject, html), emails)
 
         flash('Email Sent', 'success')
         return redirect(url_for('admin.election_settings', election_id=election.id))
@@ -114,8 +114,6 @@ def election_settings(election_id):
         html = mass_form.message.data
         subject = mass_form.subject.data
         map(send_mail(voters.email, subject, html), voters)
-        #        for voter in voters:
-        #            send_mail(voter.email, subject, html)
 
         flash('Email Sent', 'success')
         return redirect(url_for('admin.election_settings', election_id=election.id))
@@ -223,7 +221,6 @@ def election_voters(election_id, page):
     per_page = 50
     election = Election.query.filter_by(id=election_id).first()
     voters = Voter.query.filter_by(election_id=election.id).paginate(page=page, per_page=per_page)
-    # might change voters to obj so I can paginate it
 
     voter_form = VoterForm()
     if request.method == "POST" and voter_form.submit_voter.data and voter_form.validate_on_submit():
@@ -236,17 +233,18 @@ def election_voters(election_id, page):
         flash('New Voter Added!', 'success')
         return redirect(url_for('admin.election_voters', election_id=election.id))
 
+    def add_vot(y):
+        voter = Voter(name=y[1], email=y[2], index_number=y[3], campus=y[4], level=y[5],
+                      election_id=election.id)
+        db.session.add(voter)
+        db.session.commit()
+
     import_voters = ImportVotersForm()
     if request.method == "POST" and import_voters.submit_voters.data and import_voters.validate_on_submit():
         f = request.files['voters']
         stream = io.StringIO(f.stream.read().decode("UTF8"), newline=None)
         csv_input = csv.reader(stream)
-
-        for row in csv_input:
-            voter = Voter(name=row[1], email=row[2], index_number=row[3], campus=row[4], level=row[5],
-                          election_id=election.id)
-            db.session.add(voter)
-            db.session.commit()
+        map(add_vot, csv_input)
 
         return redirect(url_for('admin.election_voters', election_id=election.id))
 
@@ -378,10 +376,15 @@ def delete_voter(election_id, voter_id):
 @login_required
 def delete_voters(election_id):
     voters = Voter.query.filter_by(election_id=election_id).all()
+
+    def del_vot(x):
+        db.session.delete(x)
+        db.session.commit()
+
+    flash('Voter Database Deleted', 'success')
+
     if voters:
-        for voter in voters:
-            db.session.delete(voter)
-            db.session.commit()
+        map(del_vot, voters)
 
         flash('Voter Database Deleted', 'success')
     else:
@@ -404,16 +407,10 @@ def election_analyse(election_id):
 
     # total votes for organa and general
     generals = Candidate.query.filter_by(election_id=election.id, portfolio='General Secretary').all()
-    total_general = 0
-
-    for general in generals:
-        total_general += general.votes_number
+    total_general = sum(map(lambda general: general.votes_number, generals))
 
     organas = Candidate.query.filter_by(election_id=election.id, portfolio='Organizing Secretary').all()
-    total_organa = 0
-
-    for organa in organas:
-        total_organa += organa.votes_number
+    total_organa = sum(map(lambda organa: organa.votes_number, organas))
 
     # voter demographics
     main_voters = Voter.query.filter_by(election_id=election.id, campus='Main').all()
@@ -462,14 +459,16 @@ def launch_election(election_id):
 def send_links(election_id):
     election = Election.query.filter_by(id=election_id).first()
 
+    def items(t):
+        unique_token = generate_confirmation_token(t.email)
+        voting_url = url_for('voters.voters_landing', token=unique_token, _external=True)
+        html = "This is a notice for the Business House JCR Executives Election 21. Click on this link to vote: " + voting_url
+        subject = "Vote for your BHJCR Executives"
+        send_mail(t.email, subject, html)
+
     if election.status != "Ended":
         voters = Voter.query.filter_by(election_id=election.id).all()
-        for voter in voters:
-            unique_token = generate_confirmation_token(voter.email)
-            voting_url = url_for('voters.voters_landing', token=unique_token, _external=True)
-            html = "This is a notice for the Business House JCR Executives Election 21. Click on this link to vote: " + voting_url
-            subject = "Vote for your BHJCR Executives"
-            send_mail(voter.email, subject, html)
+        map(items, voters)
 
         flash('The Special links have been sent!', 'info')
         return redirect(url_for('admin.admin_election', election_id=election.id))
