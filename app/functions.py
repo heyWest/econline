@@ -13,17 +13,17 @@ from flask import current_app
 
 
 @async_call
+def tim(x):
+    if x.start_at < datetime.datetime.now() and x.status == "Building":
+        x.status = "Ongoing"
+        db.session.commit()
+    elif x.end_at < datetime.datetime.now():
+        x.status = "Ended"
+        db.session.commit()
+
+
 def start_end_election():
     elections = Election.query.all()
-
-    def tim(x):
-        if x.start_at < datetime.datetime.now() and x.status == "Building":
-            x.status = "Ongoing"
-            db.session.commit()
-        elif x.end_at < datetime.datetime.now():
-            x.status = "Ended"
-            db.session.commit()
-
     map(tim, elections)
 
 

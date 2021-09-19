@@ -2,3 +2,13 @@ def factorial(n, acc=1):
     if n == 0:
         return acc
     return factorial(n - 1, acc * n)
+
+
+################2
+def factorial(n, acc=1):
+    while True:
+        if n == 0:
+            return acc
+        else:
+            acc = n * acc
+            n = n - 1

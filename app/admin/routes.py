@@ -17,6 +17,7 @@ import os
 admin = Blueprint('admin', __name__)
 
 
+#using the decorators design pattern
 @admin.route('/admin/login', methods=['POST', 'GET'])
 def admin_login():
     if current_user.is_authenticated:
@@ -44,7 +45,7 @@ def admin_landing():
             "%H:%M")
         end_at = election_form.end_date.data.strftime("%Y-%m-%d") + " " + election_form.end_time.data.strftime("%H:%M")
 
-        # chaging str back to datetime and inserting to db
+        # changing str back to datetime and inserting to db
         new_election = Election(name=election_form.name.data,
                                 start_at=datetime.datetime.strptime(start_at, "%Y-%m-%d %H:%M"),
                                 end_at=datetime.datetime.strptime(end_at, "%Y-%m-%d %H:%M"))
@@ -77,7 +78,6 @@ def admin_election(election_id):
 @login_required
 def election_settings(election_id):
     election = Election.query.filter_by(id=election_id).first()
-
     edit_name = EditElectionNameForm()
     if edit_name.submit_name.data and edit_name.validate_on_submit():
         election.name = edit_name.name.data
@@ -374,12 +374,13 @@ def delete_voter(election_id, voter_id):
 @admin.route('/admin/election/voters/delete', methods=['POST'])
 @admin.route('/admin/election/voters/delete/<election_id>', methods=['POST'])
 @login_required
+def del_vot(x):
+    db.session.delete(x)
+    db.session.commit()
+
+
 def delete_voters(election_id):
     voters = Voter.query.filter_by(election_id=election_id).all()
-
-    def del_vot(x):
-        db.session.delete(x)
-        db.session.commit()
 
     flash('Voter Database Deleted', 'success')
 
@@ -456,15 +457,16 @@ def launch_election(election_id):
 
 @admin.route('/admin/election/send-links', methods=['POST', 'GET'])
 @admin.route('/admin/election/send-links/<election_id>', methods=['POST', 'GET'])
+def items(t):
+    unique_token = generate_confirmation_token(t.email)
+    voting_url = url_for('voters.voters_landing', token=unique_token, _external=True)
+    html = "This is a notice for the Business House JCR Executives Election 21. Click on this link to vote: " + voting_url
+    subject = "Vote for your BHJCR Executives"
+    send_mail(t.email, subject, html)
+
+
 def send_links(election_id):
     election = Election.query.filter_by(id=election_id).first()
-
-    def items(t):
-        unique_token = generate_confirmation_token(t.email)
-        voting_url = url_for('voters.voters_landing', token=unique_token, _external=True)
-        html = "This is a notice for the Business House JCR Executives Election 21. Click on this link to vote: " + voting_url
-        subject = "Vote for your BHJCR Executives"
-        send_mail(t.email, subject, html)
 
     if election.status != "Ended":
         voters = Voter.query.filter_by(election_id=election.id).all()
@@ -519,8 +521,8 @@ def create_admin():
             if form.validate_on_submit():
                 hashed_password = bcrypt.generate_password_hash(
                     form.password.data).decode('utf-8')
-                admin = Admin(email=form.email.data, password=hashed_password)
-                db.session.add(admin)
+                admin_add = Admin(email=form.email.data, password=hashed_password)
+                db.session.add(admin_add)
                 db.session.commit()
 
                 flash('New Admin Added! Login', 'success')
