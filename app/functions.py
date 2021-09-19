@@ -28,18 +28,20 @@ def start_end_election():
 
 
 def save_picture(candidate_name, form_picture):
-    random_hex = secrets.token_hex(3)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = candidate_name + random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/candidate_pictures', picture_fn)
-    form_picture.save(picture_path)
+    app = current_app._get_current_object()
+    with app.app_context():
+        random_hex = secrets.token_hex(3)
+        _, f_ext = os.path.splitext(form_picture.filename)
+        picture_fn = candidate_name + random_hex + f_ext
+        picture_path = os.path.join(app.root_path, 'static/candidate_pictures', picture_fn)
+        form_picture.save(picture_path)
 
-    output_size = (500, 500)  # minimizing the size of the image so it isn't saved so large in the database
-    i = Image.open(form_picture)
-    i.thumbnail(output_size)
-    i.save(picture_path)
+        output_size = (500, 500)  # minimizing the size of the image so it isn't saved so large in the database
+        i = Image.open(form_picture)
+        i.thumbnail(output_size)
+        i.save(picture_path)
 
-    return picture_fn
+        return picture_fn
 
 
 @async_call
@@ -60,18 +62,22 @@ def send_mail(to, subject, template):
 
 
 def generate_confirmation_token(email):
-    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
+    app = current_app._get_current_object()
+    with app.app_context():
+        serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+        return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
 
 
 def confirm_token(token, expiration=864000):
-    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-    try:
-        email = serializer.loads(
-            token,
-            salt=app.config['SECURITY_PASSWORD_SALT'],
-            max_age=expiration
-        )
-    except:
-        return False
-    return email
+    app = current_app._get_current_object()
+    with app.app_context():
+        serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+        try:
+            email = serializer.loads(
+                token,
+                salt=app.config['SECURITY_PASSWORD_SALT'],
+                max_age=expiration
+            )
+        except:
+            return False
+        return email
