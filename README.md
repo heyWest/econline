@@ -48,7 +48,7 @@ Initialize Database
 Add/Edit Environment Variables
 
 Make and update migrations
-
+ 
 ` python run.py db stamp 7d52952abb12`
 
 ` python run.py db migrate `
